@@ -34,6 +34,10 @@ Control your own Android from ChatGPT: manage files, download and install apps, 
 
 **Ready:** request further actions in ChatGPT. You do not need to download separate APKs, source code or flashing tools to your phone. The agent is required: the plugin sends it jobs, and it executes them on Android. A plugin alone cannot access your device without the agent.
 
+## Support development
+
+You can support Mini Codex with a voluntary donation on [Boosty](https://boosty.to/mini_codexandroid). Donations help with development, compatibility testing, bug fixes, and documentation. Source code and public releases remain free under the MIT license.
+
 ## What to know
 
 The author's current personal plugin is not a shared server for other people's phones. The public guide helps you create your own connection. Mobile plugin availability depends on your ChatGPT account and must be checked during setup; installing the ZIP does not enable missing account features.
