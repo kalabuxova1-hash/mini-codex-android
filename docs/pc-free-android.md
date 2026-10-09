@@ -20,9 +20,11 @@ Depending on permissions and Android behaviour, available tools inspect phone st
 
 Not necessarily. Bootloader unlocking and rooting may require a computer depending on the phone. The claim is specifically **PC-free operation after setup**, not PC-free installation on every device.
 
-## Is it autonomous AI / first in the world?
+## What distinguishes Mini Codex from other Android Codex projects?
 
-The **worker runs independently of a computer**, but tasks still come through the owner's ChatGPT connection. Mini Codex does not promise local/offline model inference or self-directed operation. The project makes no unverified claim of being the world's first or only Android AI agent.
+Mini Codex focuses on **ChatGPT-to-Android device control with a phone-local, Magisk-started root worker**. It is **not** just a terminal port of Codex CLI or a desktop remote-control client: the agent itself executes tasks directly on Android without a running PC. Its private relay runs online, and the ChatGPT plugin submits jobs to the worker.
+
+This distinguishes the **architecture and purpose**, not an independently verified claim to be the **first or only** Android Codex agent. Other public projects already connect Codex/ChatGPT to Android device tooling; see [android-codex-bridge](https://github.com/tamir-oss/android-codex-bridge). The term "autonomous" here means **computer-independent execution and background polling**, not offline model inference or unsupervised decision-making.
 
 ## Can it control a secure locked screen invisibly?
 
