@@ -1,8 +1,36 @@
-# Mini Codex — phone plugin
+# Mini Codex for Android — phone control from ChatGPT without a PC
 
 English | [Русский](README.ru.md)
 
-Control your own Android from ChatGPT: manage files, download and install apps, and run commands. After setup, no computer is required.
+**Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
+
+Mini Codex is an independent, open-source Android agent that lets the owner request supported phone operations from ChatGPT. A local Python worker in Termux, started by a Magisk module, polls the owner's **private HTTPS relay** and executes authorized commands **on the Android phone**. The computer can be completely powered off during normal operation.
+
+### PC-free Android operation
+
+```text
+ChatGPT (mobile or other supported client)
+     ↕ owner's personal plugin
+Private HTTPS relay (online service)
+     ↕ authenticated outbound requests
+Android phone: Mini Codex worker + Magisk + Termux
+     ↓
+Android UI, installed apps, filesystem and root commands
+```
+
+- **No desktop runtime:** the phone runs the agent, performs root shell commands, manages files, downloads files and installs owner-approved APKs locally; this does not rely on PC-side ADB, scrcpy or Windows/Linux/macOS.
+- **Background worker and restart:** Magisk starts the worker after Android boots. It processes incoming queued jobs when its runtime, network, relay and permissions are available, including while no computer is connected. Android power management or a secure first-unlock requirement may interrupt it.
+- **Control from ChatGPT:** available tools include phone/battery status, screenshots and UI hierarchy, taps/swipes/keys, launching apps and file operations.
+- **Local persistent notes:** the agent can store compact memory records and archives within its managed 5 GiB limit. This does not train an AI model.
+- **Private by design:** each owner needs their own personal plugin, private relay and credentials. No shared public root endpoint is included.
+
+**Precise distinction:** "without a PC" describes **day-to-day operation after setup**, not a promise that every phone can be rooted or initially prepared without a computer. The system still requires internet access, a functioning private relay, a compatible ChatGPT plugin/account and locally installed root/Termux. This is not a fully offline autonomous AI; it executes requests through ChatGPT. The worker does not bypass a secure lock screen, and a separate hidden virtual display is not a verified release feature.
+
+**Verified scope:** personal use on a rooted Redmi Turbo 3 / Android 16. The public v0.1.0 release ZIP was checked by host and mocked tests but not installed over the working personal installation. Other devices and background behaviour require testing.
+
+For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
+
+## Setup instructions
 
 ## Requirements
 
