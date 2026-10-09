@@ -62,6 +62,10 @@ For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 
 **Ready:** request further actions in ChatGPT. You do not need to download separate APKs, source code or flashing tools to your phone. The agent is required: the plugin sends it jobs, and it executes them on Android. A plugin alone cannot access your device without the agent.
 
+## For independent reviewers
+
+Reviewers and journalists can use the [English fact sheet and reproducible PC-free testing checklist](docs/press-kit.md). It distinguishes verified code and author reports from independent testing, and clearly lists limitations.
+
 ## Support development
 
 You can support Mini Codex with a voluntary donation on [Boosty](https://boosty.to/mini_codexandroid). Donations help with development, compatibility testing, bug fixes, and documentation. Source code and public releases remain free under the MIT license.
