@@ -1,0 +1,502 @@
+"""Phone-local root tools. Python standard library only; no PC, ADB or model SDK."""
+from __future__ import annotations
+import base64
+import hashlib
+import gzip
+import hmac
+import inspect
+import json
+import os
+from pathlib import Path
+import re
+import shlex
+import sqlite3
+import stat
+import subprocess
+import tempfile
+import threading
+import time
+import urllib.request
+import urllib.parse
+import uuid
+import xml.etree.ElementTree as ET
+
+BASE=Path(__file__).resolve().parent
+LOCK=threading.RLock()
+TOTAL_STORAGE_BYTES=5*1024*1024*1024
+AGENT_STORAGE_RESERVE_BYTES=16*1024*1024
+MAX_MEMORY_BYTES=TOTAL_STORAGE_BYTES-AGENT_STORAGE_RESERVE_BYTES
+_RECOVERED_MEMORY_DATABASES=set()
+
+
+def adb(*args: str, timeout: int=30, binary: bool=False):
+    """Implement the existing tool backend using local su, not an ADB connection."""
+    with LOCK:
+        if args == ('get-state',):
+            return 'local-android'
+        if len(args) == 2 and args[0] == 'shell':
+            command = args[1]
+            if command.startswith('su -c '):
+                parts = shlex.split(command)
+                if len(parts) != 3:
+                    raise ValueError('Malformed root command wrapper')
+                command = parts[2]
+            return run_android(command, timeout=timeout, binary=binary)
+        if args and args[0] == 'exec-out':
+            if len(args) == 2 and args[1].startswith('su -c '):
+                parts = shlex.split(args[1])
+                if len(parts) != 3:
+                    raise ValueError('Malformed root command wrapper')
+                command = parts[2]
+            else:
+                command = shlex.join(args[1:])
+            return run_android(command, timeout=timeout, binary=binary)
+        if len(args) == 3 and args[0] == 'push':
+            source, destination = args[1:]
+            if not Path(source).is_file():
+                raise ValueError('Local phone runtime file does not exist')
+            run_android('cp -- ' + shlex.quote(source) + ' ' + phone_path(destination), timeout=timeout)
+            return 'Copied locally on Android'
+        raise ValueError('Unsupported local Android backend operation')
+
+def run_android(command: str, *, timeout: int=30, binary: bool=False):
+    su = os.environ.get('ANDROID_SU', '/system/bin/su')
+    is_root = getattr(os, 'geteuid', lambda: -1)() == 0
+    if not is_root and (not Path(su).is_file()):
+        raise RuntimeError('Android Magisk su not found; set ANDROID_SU to its actual path')
+    full_command = 'export PATH=/system/bin:/system/xbin; ' + command
+    environment = os.environ.copy()
+    environment.pop('LD_PRELOAD', None)
+    environment.pop('LD_LIBRARY_PATH', None)
+    try:
+        argv = ['/system/bin/sh', '-c', full_command] if is_root else [su, '-c', full_command]
+        result = subprocess.run(argv, capture_output=True, timeout=timeout, env=environment)
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError('Android root command timed out') from exc
+    if result.returncode:
+        raise RuntimeError(result.stderr.decode('utf-8', 'replace')[:2000])
+    return result.stdout if binary else result.stdout.decode('utf-8', 'replace').strip()
+
+def shell(command: str, root: bool=True, timeout: int=30):
+    return adb('shell', 'su -c ' + shlex.quote(command) if root else command, timeout=timeout)
+
+def phone_path(path: str) -> str:
+    if not path.startswith('/') or '\x00' in path or '\n' in path:
+        raise ValueError('Specify an absolute Android path without nulls/newlines')
+    return shlex.quote(path)
+
+def coordinate(value: int) -> int:
+    if not 0 <= value <= 16384:
+        raise ValueError('Coordinate must be between 0 and 16384')
+    return value
+
+def wake_phone() -> None:
+    """Wake without changing timeouts or bypassing a secure lock screen."""
+    shell('input keyevent 224')
+    time.sleep(0.25)
+    if os.environ.get('ANDROID_MCP_DISMISS_INSECURE_KEYGUARD') == '1':
+        shell('wm dismiss-keyguard')
+
+def redact_ui_text(value: str) -> str:
+    return re.sub('(?:https?|vless|vmess|trojan|ss|ssr|hysteria2?|hy2|tuic)://[^\\s<>\\"\']+', '[private URL]', value, flags=re.I)
+
+def phone_status() -> dict:
+    """Read connection, model, Android/build version, battery and root availability."""
+    state = adb('get-state')
+    props = shell('getprop ro.product.model; getprop ro.build.version.release; getprop ro.build.version.incremental', root=False).splitlines()
+    battery = shell('dumpsys battery', root=False)
+    level = re.search('level:\\s*(\\d+)', battery)
+    return {'state': state, 'model': props[0] if props else '', 'android': props[1] if len(props) > 1 else '', 'build': props[2] if len(props) > 2 else '', 'battery_percent': int(level[1]) if level else None, 'root_identity': shell('id')}
+
+def read_ui(limit: int=120) -> dict:
+    """Read fresh visible Android UI nodes with bounds; password/private identifiers are redacted."""
+    if not 1 <= limit <= 500:
+        raise ValueError('limit must be 1..500')
+    tree = None
+    with LOCK:
+        wake_phone()
+        for attempt in range(3):
+            remote = '/data/local/tmp/owner-mcp-ui-' + uuid.uuid4().hex + '.xml'
+            try:
+                result = shell('uiautomator dump --compressed ' + shlex.quote(remote), timeout=20)
+                if 'ERROR:' in result or 'could not get idle state' in result.lower():
+                    raise RuntimeError('Android UI hierarchy is not idle')
+                tree = ET.fromstring(shell('cat ' + shlex.quote(remote)))
+                break
+            except (RuntimeError, ET.ParseError):
+                if attempt < 2:
+                    time.sleep(0.4)
+            finally:
+                try:
+                    shell('rm -f ' + shlex.quote(remote))
+                except RuntimeError:
+                    pass
+    if tree is None:
+        return {'nodes': [], 'error': 'UI hierarchy unavailable after 3 attempts; use screenshot for animated screens. If locked, the owner must unlock the phone.'}
+    nodes = []
+    for node in tree.iter('node'):
+        attrs = node.attrib
+        text, desc = (attrs.get('text', ''), attrs.get('content-desc', ''))
+        if not (text or desc or attrs.get('clickable') == 'true'):
+            continue
+        ident = attrs.get('resource-id', '')
+        private = attrs.get('password') == 'true' or bool(re.search('password|secret|token|account_name|email|phone_number', ident, re.I))
+        nodes.append({'text': '[private]' if private else redact_ui_text(text)[:500], 'description': '[private]' if private else redact_ui_text(desc)[:500], 'id': redact_ui_text(ident), 'bounds': attrs.get('bounds'), 'clickable': attrs.get('clickable') == 'true', 'enabled': attrs.get('enabled') == 'true'})
+        if len(nodes) >= limit:
+            break
+    return {'nodes': nodes, 'rotation': tree.attrib.get('rotation')}
+
+def tap(x: int, y: int) -> str:
+    """Tap a coordinate derived from a fresh screenshot or read_ui bounds."""
+    command = f'input tap {coordinate(x)} {coordinate(y)}'
+    wake_phone()
+    shell(command)
+    return 'Tapped'
+
+def swipe(x1: int, y1: int, x2: int, y2: int, duration_ms: int=300) -> str:
+    """Swipe the phone screen using fresh coordinates."""
+    if not 50 <= duration_ms <= 10000:
+        raise ValueError('duration_ms must be 50..10000')
+    command = f'input swipe {coordinate(x1)} {coordinate(y1)} {coordinate(x2)} {coordinate(y2)} {duration_ms}'
+    wake_phone()
+    shell(command)
+    return 'Swiped'
+
+def keypress(key: str) -> str:
+    """Send HOME, BACK, ENTER, POWER, WAKEUP, volume, menu or recent-apps key."""
+    keys = {'HOME': 3, 'BACK': 4, 'ENTER': 66, 'POWER': 26, 'WAKEUP': 224, 'VOLUME_UP': 24, 'VOLUME_DOWN': 25, 'MENU': 82, 'APP_SWITCH': 187}
+    if key.upper() not in keys:
+        raise ValueError('Unsupported key')
+    wake_phone()
+    shell(f'input keyevent {keys[key.upper()]}')
+    return 'Key sent'
+
+def launch_app(package: str) -> str:
+    """Open an installed Android package. Does not grant permissions or sign in."""
+    if not re.fullmatch('[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z0-9_]+)+', package):
+        raise ValueError('Invalid package name')
+    wake_phone()
+    return shell('monkey -p ' + package + ' -c android.intent.category.LAUNCHER 1')
+
+def root_shell(command: str, timeout_seconds: int=30) -> dict:
+    """Execute an owner-authorized Android root shell command, including advanced device management. May alter/delete any device data. Not a Windows shell."""
+    if not command.strip() or '\x00' in command:
+        raise ValueError('Command is empty or contains a null byte')
+    if not 1 <= timeout_seconds <= 120:
+        raise ValueError('timeout_seconds must be 1..120')
+    result = shell(command, timeout=timeout_seconds)
+    return {'output': result[:60000], 'truncated': len(result) > 60000}
+
+def phone_list_files(directory: str, include_hidden: bool=False) -> dict:
+    """List an owner-requested Android directory with root, including app/private folders when explicitly requested."""
+    result = shell('ls ' + ('-la ' if include_hidden else '-l ') + '-- ' + phone_path(directory))
+    return {'directory': directory, 'listing': result[:60000], 'truncated': len(result) > 60000}
+
+def phone_read_file(path: str, encoding: str='utf-8', max_bytes: int=262144) -> dict:
+    """Read an explicitly requested phone file as UTF-8 or base64. Never extract credentials or tokens."""
+    if encoding not in ('utf-8', 'base64') or not 1 <= max_bytes <= 8 * 1024 * 1024:
+        raise ValueError('encoding must be utf-8/base64; max_bytes must be 1..8388608')
+    quoted = phone_path(path)
+    raw = adb('exec-out', 'su -c ' + shlex.quote(f'head -c {max_bytes + 1} -- {quoted}'), binary=True)
+    return {'path': path, 'encoding': encoding, 'content': base64.b64encode(raw[:max_bytes]).decode() if encoding == 'base64' else raw[:max_bytes].decode('utf-8', 'replace'), 'truncated': len(raw) > max_bytes}
+
+def phone_write_file(path: str, content: str, encoding: str='utf-8') -> dict:
+    """Write a user-requested phone file atomically with root; existing file metadata is preserved when possible. Can overwrite any writable device file."""
+    destination = phone_path(path)
+    if encoding not in ('utf-8', 'base64'):
+        raise ValueError('encoding must be utf-8/base64')
+    data = base64.b64decode(content, validate=True) if encoding == 'base64' else content.encode('utf-8')
+    if len(data) > 8 * 1024 * 1024:
+        raise ValueError('Maximum write size is 8 MiB; use root_shell for larger files')
+    remote = '/data/local/tmp/owner-mcp-write-' + uuid.uuid4().hex
+    staged = path + '.owner-mcp-' + uuid.uuid4().hex
+    staged_q = phone_path(staged)
+    with LOCK, tempfile.TemporaryDirectory(prefix='owner-mcp-') as folder:
+        local = Path(folder) / 'payload.bin'
+        local.write_bytes(data)
+        try:
+            adb('push', str(local), remote)
+            shell(f'set -e; if [ -e {destination} ]; then cp -p -- {destination} {staged_q}; else umask 077; touch -- {staged_q}; fi; cat {shlex.quote(remote)} > {staged_q}; mv -f -- {staged_q} {destination}')
+        finally:
+            shell('rm -f -- ' + shlex.quote(remote) + ' ' + staged_q)
+    return {'path': path, 'bytes_written': len(data), 'sha256': hashlib.sha256(data).hexdigest()}
+
+class HttpsOnlyRedirect(urllib.request.HTTPRedirectHandler):
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if urllib.parse.urlparse(newurl).scheme != 'https':
+            raise ValueError('Redirect to non-HTTPS URL rejected')
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+def phone_download_url(url: str, destination: str, expected_sha256: str='') -> dict:
+    """Download an owner-approved public HTTPS file with verified TLS on this PC, then save it to the phone. Does not install it automatically. Up to 1 GiB."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != 'https' or parsed.username or parsed.password:
+        raise ValueError('Only HTTPS URLs without embedded credentials are supported')
+    if expected_sha256 and (not re.fullmatch('[a-fA-F0-9]{64}', expected_sha256)):
+        raise ValueError('Invalid SHA-256')
+    dest = phone_path(destination)
+    digest = hashlib.sha256()
+    total = 0
+    remote = '/data/local/tmp/owner-mcp-download-' + uuid.uuid4().hex
+    with tempfile.TemporaryDirectory(prefix='owner-mcp-download-') as folder:
+        local = Path(folder) / 'download.bin'
+        opener = urllib.request.build_opener(HttpsOnlyRedirect())
+        request = urllib.request.Request(url, headers={'User-Agent': 'OwnerAndroidBridge/1.0'})
+        with opener.open(request, timeout=30) as response, local.open('wb') as out:
+            while (block := response.read(1024 * 1024)):
+                total += len(block)
+                if total > 1024 * 1024 * 1024:
+                    raise ValueError('Download exceeds 1 GiB')
+                digest.update(block)
+                out.write(block)
+        actual = digest.hexdigest()
+        if expected_sha256 and (not hmac.compare_digest(actual, expected_sha256.lower())):
+            raise ValueError('Downloaded file SHA-256 does not match')
+        with LOCK:
+            try:
+                adb('push', str(local), remote, timeout=120)
+                shell('cp -- ' + shlex.quote(remote) + ' ' + dest)
+            finally:
+                shell('rm -f -- ' + shlex.quote(remote))
+    return {'destination': destination, 'bytes': total, 'sha256': actual}
+
+def phone_install_apk(path: str, replace: bool=True) -> str:
+    """Install a user-approved APK already stored on the phone with root pm, without Fastboot."""
+    if not path.lower().endswith('.apk'):
+        raise ValueError('Specify an APK path')
+    return shell('pm install ' + ('-r ' if replace else '') + phone_path(path), timeout=120)
+
+def screenshot() -> dict:
+    wake_phone()
+    data=adb('exec-out','screencap','-p',binary=True)
+    if not data.startswith(b'\x89PNG\r\n\x1a\n'):
+        raise RuntimeError('Android did not return a PNG')
+    if len(data)>2*1024*1024:
+        raise ValueError('Screenshot exceeds the 2 MiB transport limit; use read_ui for this screen')
+    return {'content':[{'type':'image','mimeType':'image/png','data':base64.b64encode(data).decode('ascii')}]}
+
+
+def redact_memory(value: str) -> str:
+    value=redact_ui_text(value)
+    value=re.sub(r'(?i)(?:authorization|cookie|set-cookie)\s*[:=][^\n]+','[secret]',value)
+    value=re.sub(r'(?i)bearer\s+[^\s,;]+','[secret]',value)
+    value=re.sub(r'(?i)otpauth://[^\s<>\"\']+','[secret]',value)
+    value=re.sub(r'(?i)\b(?:password|passwd|pwd|secret|token|api[_ -]?key|пароль|токен|otp|totp|pin)\s*[:=]\s*[^\s,;]+','[secret]',value)
+    value=re.sub(r'\b(?:sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9_]{10,})\b','[secret]',value)
+    value=re.sub(r'\b[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{8,}\b','[secret]',value)
+    value=re.sub(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}','[private address]',value)
+    value=re.sub(r'(?<!\w)\+?\d[\d\s()-]{8,}\d(?!\w)','[private number]',value)
+    value=re.sub(r'(?<!\d)\d{6}(?!\d)','[private code]',value)
+    return value
+
+
+def allocated_disk_bytes(path: Path) -> int:
+    info=path.stat(follow_symlinks=False)
+    if not stat.S_ISREG(info.st_mode):
+        raise RuntimeError('Memory artifact is not a regular owned file')
+    blocks=getattr(info,'st_blocks',None)
+    if blocks is not None:
+        # Keep a conservative block for inline data/inode storage as well.
+        return max(4096,blocks*512)
+    return max(4096,((info.st_size+4095)//4096)*4096)
+
+
+def owned_archive_directory(db: sqlite3.Connection) -> Path:
+    directory=Path(db.execute('PRAGMA database_list').fetchone()[2]).parent/'archives'
+    directory.mkdir(exist_ok=True,mode=0o700)
+    if not stat.S_ISDIR(directory.stat(follow_symlinks=False).st_mode):
+        raise RuntimeError('Memory archive directory must not be a symlink')
+    os.chmod(directory,0o700)
+    return directory
+
+
+def recover_memory_archives(db: sqlite3.Connection) -> bool:
+    dbpath=Path(db.execute('PRAGMA database_list').fetchone()[2])
+    identity=str(dbpath.resolve())
+    if identity in _RECOVERED_MEMORY_DATABASES: return False
+    directory=owned_archive_directory(db)
+    # Stream this private directory once per process, never recurse or follow
+    # symlinks. Strict filenames are exclusively generated by archive_note.
+    with os.scandir(directory) as entries:
+        for entry in entries:
+            if not re.fullmatch(r'[0-9a-f]{32}\.json\.gz',entry.name) or not entry.is_file(follow_symlinks=False):
+                continue
+            record=db.execute('SELECT id FROM archives WHERE file=?',(entry.name,)).fetchone()
+            if record is None:
+                Path(entry.path).unlink()
+            else:
+                db.execute('UPDATE archives SET bytes=? WHERE id=?',(allocated_disk_bytes(Path(entry.path)),record[0]))
+    # Remove stale index rows for missing/nonregular files. Never delete their
+    # path or anything outside the private archive directory. Iterate in pages.
+    last_id=0
+    while True:
+        rows=db.execute('SELECT id,file FROM archives WHERE id>? ORDER BY id LIMIT 500',(last_id,)).fetchall()
+        if not rows: break
+        for ident,name in rows:
+            last_id=ident
+            valid=bool(re.fullmatch(r'[0-9a-f]{32}\.json\.gz',name))
+            if valid:
+                try: valid=stat.S_ISREG((directory/name).stat(follow_symlinks=False).st_mode)
+                except FileNotFoundError: valid=False
+            if not valid: db.execute('DELETE FROM archives WHERE id=?',(ident,))
+    db.commit()
+    _RECOVERED_MEMORY_DATABASES.add(identity)
+    return True
+
+
+def memory_database() -> sqlite3.Connection:
+    directory=Path(os.environ.get('PHONE_MEMORY_DIR',str(Path.home()/'.mini-codex'/'memory')))
+    directory.mkdir(parents=True,exist_ok=True,mode=0o700)
+    os.chmod(directory,0o700)
+    dbpath=directory/'notes.sqlite3'
+    if dbpath.is_symlink(): raise RuntimeError('Memory database must not be a symlink')
+    connection=sqlite3.connect(dbpath)
+    os.chmod(dbpath,0o600)
+    connection.execute('PRAGMA journal_mode=DELETE')
+    connection.execute('CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY,title TEXT UNIQUE,content TEXT,tags TEXT,updated REAL)')
+    connection.execute('CREATE TABLE IF NOT EXISTS archives (id INTEGER PRIMARY KEY,file TEXT UNIQUE,title TEXT,summary TEXT,tags TEXT,updated REAL,bytes INTEGER)')
+    connection.commit()
+    try:
+        recovered=recover_memory_archives(connection)
+        if recovered:
+            archive_bytes=connection.execute('SELECT COALESCE(sum(bytes),0) FROM archives').fetchone()[0]
+            if allocated_disk_bytes(dbpath)+archive_bytes>MAX_MEMORY_BYTES:
+                compact_memory(connection)
+    except Exception:
+        connection.close()
+        raise
+    return connection
+
+
+def archive_note(db: sqlite3.Connection, row: tuple) -> None:
+    title,content,tags,updated=row
+    directory=owned_archive_directory(db)
+    name=uuid.uuid4().hex+'.json.gz'
+    data=gzip.compress(json.dumps({'title':title,'content':content,'tags':json.loads(tags),'updated':updated},ensure_ascii=False).encode('utf-8'))
+    destination=directory/name
+    try:
+        with destination.open('xb') as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(destination,0o600)
+        db.execute('INSERT INTO archives(file,title,summary,tags,updated,bytes) VALUES(?,?,?,?,?,?)',(name,title,content[:384],tags,updated,allocated_disk_bytes(destination)))
+    except Exception:
+        destination.unlink(missing_ok=True)
+        raise
+
+
+def compact_memory(db: sqlite3.Connection) -> int:
+    dbpath=Path(db.execute('PRAGMA database_list').fetchone()[2])
+    cap=MAX_MEMORY_BYTES
+    db.commit()
+    db.execute('VACUUM')
+    while True:
+        archived=db.execute('SELECT COALESCE(sum(bytes),0) FROM archives').fetchone()[0]
+        total=allocated_disk_bytes(dbpath)+archived
+        if total<=cap: return total
+        oldest=db.execute('SELECT id,file FROM archives ORDER BY updated ASC LIMIT 50').fetchall()
+        if not oldest: raise RuntimeError('Memory exceeds its cap after reserving agent journal/log storage')
+        for ident,name in oldest:
+            if not re.fullmatch(r'[0-9a-f]{32}\.json\.gz',name): raise RuntimeError('Invalid owned archive filename')
+            path=owned_archive_directory(db)/name
+            try:
+                if stat.S_ISREG(path.stat(follow_symlinks=False).st_mode): path.unlink()
+            except FileNotFoundError:
+                pass
+            db.execute('DELETE FROM archives WHERE id=?',(ident,))
+        db.commit()
+        db.execute('VACUUM')
+
+
+def phone_memory_save(title: str, content: str, tags: list[str] | None=None) -> dict:
+    if not isinstance(title,str) or not title.strip() or len(title)>160:
+        raise ValueError('Title must be 1..160 characters')
+    if not isinstance(content,str) or not content.strip() or len(content.encode('utf-8'))>6144:
+        raise ValueError('Memory content must be a short note/script of at most 6 KiB')
+    tags=[] if tags is None else tags
+    if not isinstance(tags,list) or len(tags)>20 or any(not isinstance(t,str) or len(t)>50 for t in tags):
+        raise ValueError('Invalid memory tags')
+    # Do not accept full images/APKs/base64 exports as automatic memory.
+    if 'data:image/' in content.lower() or re.search(r'[A-Za-z0-9+/]{1024,}={0,2}',content):
+        raise ValueError('Store short summaries/scripts, not screenshots or binary/base64 exports')
+    clean_title=redact_memory(title.strip())
+    clean_content=redact_memory(content.strip())
+    clean_tags=[redact_memory(t) for t in tags]
+    with LOCK:
+        db=memory_database()
+        try:
+            previous=db.execute('SELECT title,content,tags,updated FROM notes WHERE title=?',(clean_title,)).fetchone()
+            if previous and (previous[1]!=clean_content or previous[2]!=json.dumps(clean_tags,ensure_ascii=False)):
+                archive_note(db,previous)
+            db.execute('INSERT INTO notes(title,content,tags,updated) VALUES(?,?,?,?) ON CONFLICT(title) DO UPDATE SET content=excluded.content,tags=excluded.tags,updated=excluded.updated',
+                       (clean_title,clean_content,json.dumps(clean_tags,ensure_ascii=False),time.time()))
+            overflow=db.execute('SELECT title,content,tags,updated FROM notes ORDER BY updated DESC LIMIT -1 OFFSET 200').fetchall()
+            for row in overflow: archive_note(db,row)
+            db.execute('DELETE FROM notes WHERE id NOT IN (SELECT id FROM notes ORDER BY updated DESC LIMIT 200)')
+            size=compact_memory(db)
+            count=db.execute('SELECT count(*) FROM notes').fetchone()[0]
+            archive_count=db.execute('SELECT count(*) FROM archives').fetchone()[0]
+        finally:
+            db.close()
+    return {'saved':True,'title':clean_title,'notes_count':count,'archive_count':archive_count,'bytes':size,'max_bytes':MAX_MEMORY_BYTES,'total_storage_cap_bytes':TOTAL_STORAGE_BYTES,'agent_reserve_bytes':AGENT_STORAGE_RESERVE_BYTES,'redacted':clean_title!=title.strip() or clean_content!=content.strip() or clean_tags!=tags}
+
+
+def phone_memory_search(query: str, limit: int=10) -> dict:
+    if not isinstance(query,str) or len(query)>2000 or not 1<=limit<=30:
+        raise ValueError('Invalid memory query/limit')
+    with LOCK:
+        db=memory_database()
+        try:
+            escaped=redact_memory(query).replace('\\','\\\\').replace('%','\\%').replace('_','\\_')
+            pattern='%'+escaped+'%'
+            rows=db.execute("SELECT id,title,content,tags,updated FROM notes WHERE title LIKE ? ESCAPE '\\' OR content LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' ORDER BY updated DESC LIMIT ?",(pattern,pattern,pattern,limit)).fetchall()
+            archive_rows=db.execute("SELECT id,title,summary,tags,updated FROM archives WHERE title LIKE ? ESCAPE '\\' OR summary LIKE ? ESCAPE '\\' OR tags LIKE ? ESCAPE '\\' ORDER BY updated DESC LIMIT ?",(pattern,pattern,pattern,limit-len(rows))).fetchall()
+        finally:
+            db.close()
+    return {'notes':[{'id':r[0],'title':r[1],'content':r[2],'tags':json.loads(r[3]),'updated':r[4],'archived':False} for r in rows]+[{'id':r[0],'title':r[1],'content':r[2],'tags':json.loads(r[3]),'updated':r[4],'archived':True} for r in archive_rows]}
+
+
+def tool_definitions() -> list[dict]:
+    return json.loads((BASE/'tool-definitions.json').read_text(encoding='utf-8'))
+
+
+def validate_schema(value, schema: dict, name: str='arguments') -> None:
+    kind=schema.get('type')
+    types={'string':str,'object':dict,'array':list,'boolean':bool,'integer':int}
+    if kind in types and (not isinstance(value,types[kind]) or (kind=='integer' and isinstance(value,bool))):
+        raise ValueError(name+' must be '+kind)
+    if 'enum' in schema and value not in schema['enum']: raise ValueError(name+' has an unsupported value')
+    if kind=='integer':
+        if value<schema.get('minimum',value) or value>schema.get('maximum',value): raise ValueError(name+' is outside the allowed range')
+    if kind=='string':
+        if len(value)<schema.get('minLength',0) or len(value)>schema.get('maxLength',len(value)): raise ValueError(name+' has an invalid length')
+    if kind=='object':
+        properties=schema.get('properties',{})
+        if any(key not in value for key in schema.get('required',[])): raise ValueError(name+' is missing a required field')
+        if schema.get('additionalProperties') is False and any(key not in properties for key in value): raise ValueError(name+' contains unsupported fields')
+        for key,item in value.items():
+            if key in properties: validate_schema(item,properties[key],name+'.'+key)
+    if kind=='array':
+        if len(value)>schema.get('maxItems',len(value)): raise ValueError(name+' has too many items')
+        for item in value: validate_schema(item,schema.get('items',{}),name+'[]')
+
+
+def dispatch(tool: str, arguments: dict) -> dict:
+    # Dispatch exclusively named tools; never eval code received from the relay.
+    allowed={definition['name']:definition for definition in tool_definitions()}
+    if tool not in allowed or not isinstance(arguments,dict):
+        return {'content':[{'type':'text','text':'Unknown tool or invalid arguments'}],'isError':True}
+    try:
+        validate_schema(arguments,allowed[tool]['inputSchema'])
+        function=globals()[tool]
+        inspect.signature(function).bind(**arguments)
+        result=function(**arguments)
+        if tool=='screenshot':
+            return {**result,'isError':False}
+        return {'content':[{'type':'text','text':json.dumps(result,ensure_ascii=False)}],
+                'structuredContent':result if isinstance(result,dict) else {'result':result},'isError':False}
+    except Exception as exc:
+        # A command error may contain an input URL; sanitize before transmission.
+        return {'content':[{'type':'text','text':redact_ui_text(str(exc))[:3000]}],'isError':True}
