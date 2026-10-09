@@ -1,7 +1,9 @@
-# Изменения
+# Changelog
+
+English | [Русский](CHANGELOG.ru.md)
 
 ## 0.1.0
 
-Первый публичный комплект: Python агент на Android, Magisk установщик, локальная настройка секретов и шаблон отдельного приватного Site relay.
+First public bundle: a Python agent for Android, a Magisk installer, local credential configuration, and a template for a separate private Site relay.
 
-Добавлены ограниченная память с gzip архивами, журнал заданий, проверки установки и сканер содержимого выпуска. Публичный комплект не содержит личной конфигурации и не обновляет работающие установки автоматически.
+Includes bounded memory with gzip archives, a job journal, installation checks, and a release content scanner. The public bundle contains no personal configuration and does not automatically update working installations.

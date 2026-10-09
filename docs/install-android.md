@@ -1,5 +1,7 @@
 # Android installation
 
+English | [Русский](install-android.ru.md)
+
 MiniCodex runs a Python worker on **your rooted phone**. The PC is unnecessary after installation. It sends authenticated outbound HTTPS requests to **your own private relay**; it opens no phone network listener. Connecting that private relay's plugin to ChatGPT remains a separate account setup step. Installing this ZIP does not give the ChatGPT APK a Magisk permission or make the plugin connection automatically.
 
 ## Before installing

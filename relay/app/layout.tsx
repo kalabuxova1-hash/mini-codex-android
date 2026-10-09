@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Мини Codex — телефон",
-  description: "Личный агент для управления телефоном и сжатой памяти задач.",
+  title: "Mini Codex — phone",
+  description: "A personal agent for phone control and compressed task memory.",
   other: {
     "codex-preview": "development",
   },
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="en">
       <body className="antialiased">{children}</body>
     </html>
   );

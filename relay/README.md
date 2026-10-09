@@ -1,5 +1,9 @@
 # Mini Codex: personal phone relay
 
+English | [Русский](README.ru.md)
+
+The relay page uses English by default. Select **Русский** to view it in Russian, or **English** to switch back.
+
 This source template connects one owner's private ChatGPT plugin to one rooted Android phone. Each deployment has its own private Site, database, plugin and phone credential. It is not a shared public control server.
 
 Follow [Deploy your own private relay](../docs/deploy-private-relay.md). The template's hosting manifest intentionally contains no project ID or credentials. Deploy from your own private checkout and leave this public template unchanged.

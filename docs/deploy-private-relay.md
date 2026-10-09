@@ -1,56 +1,58 @@
-# Развернуть свой личный relay
+# Deploy your own private relay
 
-Публичный репозиторий содержит исходники. Он не даёт доступ к чужому телефону, аккаунту, серверу или плагину. Каждый владелец создаёт **свой новый приватный Site**, свою D1-базу, свой токен телефона и свой личный плагин. Один экземпляр рассчитан на одного владельца и один телефон.
+English | [Русский](deploy-private-relay.ru.md)
 
-## Попросить свой Codex подготовить сервер
+The public repository contains source code. It does not provide access to anyone else's phone, account, server or plugin. Each owner creates **their own new private Site**, D1 database, phone token and personal plugin. Each instance is intended for one owner and one phone.
 
-Склонируйте исходники в личную рабочую папку. Для размещения используйте отдельную приватную копию `relay/`: после регистрации в её hosting manifest появится ваш личный ID. Не отправляйте такую копию обратно в публичный репозиторий.
+## Ask your Codex to prepare the server
 
-Можно передать своему Codex этот запрос:
+Clone the sources into a personal working directory. Deploy a separate private copy of `relay/`: after registration, its hosting manifest will contain your personal ID. Do not push that copy back to the public repository.
 
-> Используй навыки Sites building, Sites hosting и Sites MCP. Разверни исходники relay из этого репозитория как мой новый owner-private Site с D1 DB и MCP. Не используй никакой существующий чужой Site, project ID, URL, плагин или токен. Сохрани owner pin и авторизацию очереди. Создай отдельный случайный токен телефона, установи его как secret PHONE_AGENT_TOKEN и подготовь мою конфигурацию телефона вне репозитория. Получи мой собственный Sites bypass для телефонного агента. Подключи личный плагин, автоматически созданный Sites для моего Site. Проверь phone_status после подключения моего телефона.
+You can give your Codex this prompt:
 
-В `relay/.openai/hosting.json` уже указаны `d1: "DB"`, `r2: null` и `capabilities: ["mcp"]`. В шаблоне намеренно нет `project_id`. Codex должен зарегистрировать **новый** Site под вашим аккаунтом и получить его ID и URL из native Sites tools. Служебные ресурсы, миграции и размещение настраиваются штатным Sites workflow, а не копированием чужих Cloudflare bindings.
+> Use the Sites building, Sites hosting and Sites MCP skills. Deploy the relay sources from this repository as my new owner-private Site with D1 DB and MCP. Do not use any existing Site, project ID, URL, plugin or token belonging to someone else. Preserve the owner pin and queue authorization. Create a separate random phone token, set it as the PHONE_AGENT_TOKEN secret, and prepare my phone configuration outside the repository. Obtain my own Sites bypass for the phone agent. Connect the personal plugin automatically created by Sites for my Site. Check phone_status after connecting my phone.
 
-Site должен остаться приватным. Авторизация ChatGPT выполняется Sites на границе размещения; публичное размещение или самостоятельно подставленный identity header не заменяют эту защиту. Owner pin закрепляется за первым аутентифицированным владельцем. Сначала откройте собственную страницу под своим аккаунтом и не выдавайте доступ другим людям. Не очищайте owner pin для исправления ошибки входа.
+`relay/.openai/hosting.json` already specifies `d1: "DB"`, `r2: null` and `capabilities: ["mcp"]`. The template intentionally has no `project_id`. Codex must register a **new** Site under your account and obtain its ID and URL from native Sites tools. Configure resources, migrations and hosting through the standard Sites workflow, rather than copying someone else's Cloudflare bindings.
 
-## Создать отдельный секрет телефона
+The Site must remain private. Sites enforces ChatGPT authorization at the hosting boundary; public hosting or a manually supplied identity header does not replace that protection. The owner pin binds to the first authenticated owner. Open your own page under your own account first and do not grant others access. Do not clear the owner pin to fix a sign-in error.
 
-Используйте криптографический генератор: `secrets.token_hex(32)` в Python или `randomBytes(32).toString("hex")` в Node.js создают 64 шестнадцатеричных символа. Генерируйте и храните значение локально вне репозитория; не выводите его в общий чат, журналы, аргументы процессов или GitHub. Для каждого личного Site нужен новый секрет.
+## Create a separate phone secret
 
-Штатным `sites_update_environment_variables` установите **secret** `PHONE_AGENT_TOKEN` для своего нового Site. Следуйте актуальной схеме инструмента из установленного Sites plugin. Не храните рабочее значение в hosting manifest, `.env.example`, исходниках или публичной документации. В `.env.example` оставлен только пустой placeholder для локальной разработки.
+Use a cryptographic generator: Python's `secrets.token_hex(32)` or Node.js's `randomBytes(32).toString("hex")` produces 64 hexadecimal characters. Generate and store the value locally outside the repository; do not expose it in a shared chat, logs, process arguments or GitHub. Each personal Site needs a new secret.
 
-Получите штатным `sites_generate_siwc_bypass_token` сервисное разрешение **для своего Site**. Это разрешение позволяет агенту телефона пройти приватную границу Sites; оно не создаёт identity владельца для вызова `/mcp` и не заменяет `PHONE_AGENT_TOKEN`. Сохраните выданный secret только в личной конфигурации телефона. Учитывайте срок действия и обновляйте его, когда требуется инструментом. Не используйте обход или credential другого владельца.
+Use the standard `sites_update_environment_variables` tool to set **secret** `PHONE_AGENT_TOKEN` for your new Site. Follow the current tool schema from the installed Sites plugin. Do not store the working value in the hosting manifest, `.env.example`, sources or public documentation. The example environment file contains only an empty placeholder for local development.
 
-## Настроить агент на своём телефоне
+Use the standard `sites_generate_siwc_bypass_token` tool to obtain service authorization **for your own Site**. This lets the phone agent pass the private Sites boundary; it does not establish owner identity for `/mcp` calls or replace `PHONE_AGENT_TOKEN`. Save the issued secret only in your private phone configuration. Respect its expiry and renew it when required by the tool. Do not use another owner's bypass or credential.
 
-Установите собранный вами или проверенный релиз модуля на **свой** Android с Magisk/root. Используйте `magisk/configure.sh` и `agent/configure.py` из этой же версии: они импортируют личные данные локально, проверяют формат и не печатают секреты. Сам архив не содержит готовой конфигурации и не должен автоматически привязывать телефон к серверу автора.
+## Configure the agent on your phone
 
-Передайте конфигурацию вне Git-репозитория. Поля:
+Install a module you built yourself or a verified release on **your own** Android with Magisk/root. Use `magisk/configure.sh` and `agent/configure.py` from the same version: they import personal data locally, validate its format and do not print secrets. The archive contains no ready-made configuration and must not automatically bind a phone to the author's server.
 
-| Поле | Ваше значение |
+Transfer the configuration outside the Git repository. Fields:
+
+| Field | Your value |
 | --- | --- |
-| `relay_url` | HTTPS URL вашего нового Site, без userinfo, query и fragment |
-| `agent_token` | Тот же личный secret, что установлен как `PHONE_AGENT_TOKEN` на вашем Site |
-| `sites_authorization` | `Bearer ` и ваш собственный Sites bypass; если для выбранного размещения он не требуется, пустая строка |
-| `state_dir` | `/data/adb/mini-codex/state` |
-| `memory_dir` | `/data/adb/mini-codex/memory` |
-| `disable_file` | `/data/adb/modules/mini_codex/disable` |
-| `poll_seconds` | `3` |
+| `relay_url` | Your new Site's HTTPS URL, without userinfo, query or fragment |
+| `agent_token` | The same personal secret set as `PHONE_AGENT_TOKEN` on your Site |
+| `sites_authorization` | `Bearer ` followed by your own Sites bypass; an empty string if the chosen hosting does not require it |
 
-Отдельного `device_id` нет. Используйте один телефон и один секрет на один личный экземпляр. Не переносите рабочий конфиг между владельцами. Агент должен хранить config только в приватной root-папке; проверьте права после импорта. При утечке смените `PHONE_AGENT_TOKEN` на сервере и `agent_token` на телефоне вместе.
+```sh
+su -c '/data/adb/modules/mini_codex/configure.sh --import /storage/emulated/0/Download/my-relay.json'
+```
 
-## Подключить свой плагин и проверить
+There is no separate `device_id`. Use one phone and one secret per personal instance. Do not transfer a working configuration between owners. The agent must store its configuration only in a private root directory; check permissions after import. If a credential leaks, rotate the server's `PHONE_AGENT_TOKEN` and the phone's `agent_token` together.
 
-Используйте App и личный plugin, которые Sites создаёт для **вашего** нового Site. Codex получает connection через `sites_get_site` с `include_mcp_connection: true` и показывает установку native plugin suggestion. Не создавайте поверх этого отдельный plugin и не копируйте чужой plugin ID. Если установка уже доступна, откройте Plugins → Personal → Created by you и выберите свой экземпляр.
+## Connect your plugin and verify
 
-После запуска агента проверьте `phone_status`, затем свежий `read_ui` или `screenshot`. Убедитесь, что возвращается именно ваш телефон и root доступен. Отдельно проверьте отказ при неверном или отсутствующем токене на agent endpoints и отсутствие доступа у другого ChatGPT владельца. Когда команда вернула pending/uncertain, проверяйте её `phone_job_result` и состояние телефона; не повторяйте необратимую команду вслепую.
+Use the App and personal plugin that Sites creates for **your own** new Site. Codex obtains the connection through `sites_get_site` with `include_mcp_connection: true` and presents a native plugin installation suggestion. Do not create another plugin on top of it or copy someone else's plugin ID. If installation is already available, open Plugins → Personal → Created by you and select your instance.
 
-После успешной проверки компьютер агенту не требуется: телефон сам опрашивает личный relay по HTTPS. Интернет, работающее root-окружение и служба агента должны оставаться доступными. Доступность личного plugin в конкретном мобильном клиенте проверяйте после подключения; исходники не обещают поддержку всех версий ChatGPT.
+After starting the agent, check `phone_status`, followed by a fresh `read_ui` or `screenshot`. Confirm that the returned phone is yours and root access is available. Separately verify rejection of incorrect or missing tokens on agent endpoints and denial of access to another ChatGPT owner. When a command returns pending/uncertain, check its `phone_job_result` and the phone's state; do not blindly repeat an irreversible command.
 
-## Проверить исходники перед размещением
+After verification, the agent does not need a computer: the phone polls your personal relay over HTTPS. Internet, a working root environment and the agent service must remain available. Check personal plugin availability in your specific mobile client after connection; these sources do not promise support for every ChatGPT version.
 
-Требуется Node.js 22.13 или новее. Из папки `relay`:
+## Check sources before deployment
+
+Requires Node.js 22.13 or newer. From the `relay` directory:
 
 ```sh
 npm ci
@@ -58,8 +60,8 @@ node --test tests/*.test.mjs
 npm run build
 ```
 
-Тест шаблона проверяет отсутствие заполненного Site ID, личных hosted URL, путей профиля Windows, заранее заполненного ID устройства и токенов. Он запускается **до** личной регистрации, когда manifest ещё является публичным шаблоном. Приватная копия после регистрации закономерно получает ваш собственный `project_id`.
+The template test checks for populated Site IDs, personal hosted URLs, Windows profile paths, predefined device IDs and tokens. Run it **before** personal registration, while the manifest is still a public template. After registration, your private copy will naturally contain your own `project_id`.
 
-Сохранены лицензии vendored build plugin и CSS. Lockfile фиксирует используемые зависимости. Проверка шаблона и build не доказывают работу всех root-команд на каждом Android: после размещения нужна отдельная проверка вашего устройства.
+Licenses for the vendored build plugin and CSS are preserved. The lockfile pins dependencies. Template checks and a build do not prove that every root command works on every Android device: test your own device separately after deployment.
 
-Auth/queue тесты выполняют настоящую relay-логику с SQLite в памяти и заменяют только runtime bindings. Проверяется отказ при отсутствующем/неверном токене, закрепление первого владельца, единственное получение задания при параллельном опросе, сохранение результата, дедупликация и перевод просроченных заданий в `uncertain`. Это локальные проверки; они не заменяют авторизацию приватного Site на границе Sites.
+Auth/queue tests run the actual relay logic with in-memory SQLite, replacing only runtime bindings. They check rejection of missing/incorrect tokens, first-owner pinning, single job claiming under concurrent polling, result persistence, deduplication and transition of expired jobs to `uncertain`. These are local checks; they do not replace private Site authorization at the Sites boundary.

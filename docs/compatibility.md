@@ -1,19 +1,21 @@
-# Совместимость и подключение
+# Compatibility and connection
 
-Проверенная конфигурация: **Redmi Turbo 3, arm64, Android 16, Global HyperOS, Magisk и Termux 0.118.3 из официального GitHub**. Поддержка других телефонов, версий Android и менеджеров root требует отдельной проверки. Установка APK и обычные root-команды после настройки выполняются внутри Android без Fastboot. Для работы без ПК нужны запущенный агент, интернет и доступное собственное relay-развёртывание.
+English | [Русский](compatibility.ru.md)
 
-## GitHub, личный плагин и телефон
+Verified configuration: **Redmi Turbo 3, arm64, Android 16, Global HyperOS, Magisk and Termux 0.118.3 from the official GitHub repository**. Other phones, Android versions and root managers require separate verification. After setup, APK installation and ordinary root commands run inside Android without Fastboot. Operation without a PC requires a running agent, internet access and your own available relay deployment.
 
-GitHub служит для скачивания исходников и выпусков. Установка модуля из репозитория не добавляет инструменты к любому аккаунту ChatGPT автоматически. Каждый владелец отдельно развёртывает свой приватный relay/Site, создаёт личный плагин и настраивает собственный телефон. Общий сервер автора и встроенные ключи в публичном архиве не используются.
+## GitHub, personal plugin and phone
 
-Импорт GitHub-плагина с `mcp.json`, `.mcp.json` или встроенным описанием MCP-сервера помечается **Desktop only**, даже если сервер имеет HTTPS-адрес. Такой импорт нельзя представлять как готовый мобильный способ подключения. Это прямо указано в [официальной документации OpenAI по управлению плагинами](https://learn.chatgpt.com/docs/enterprise/plugin-management).
+GitHub provides source code and release downloads. Installing a module from the repository does not automatically add tools to any ChatGPT account. Each owner separately deploys their own private relay/Site, creates a personal plugin and configures their own phone. The public archive contains no shared author server or embedded credentials.
 
-Для мобильного сценария здесь выбран **личный Site-плагин с собственным relay**. Его доступность, подключение и вызов инструментов надо проверить в целевом аккаунте и Android-клиенте. Наличие репозитория, навыка или root не гарантирует доступность интерфейса плагинов для любого тарифа или workspace. Если нужная функция не доступна аккаунту, модуль не может её включить.
+Importing a GitHub plugin with `mcp.json`, `.mcp.json` or an embedded MCP server description is marked **Desktop only**, even when the server has an HTTPS URL. Such an import must not be presented as a ready-to-use mobile connection. This is stated in the [official OpenAI plugin management documentation](https://learn.chatgpt.com/docs/enterprise/plugin-management).
 
-[Официальная документация OpenAI по созданию плагинов](https://learn.chatgpt.com/docs/build-plugins) описывает приватное начало, отдельные права создания/использования и выдачу доступа выбранным людям. Подключение приложения остаётся отдельным шагом; распространение исходников не переносит авторизацию владельца. Для нескольких пользователей создавайте отдельные развёртывания и ключи, затем проверяйте права каждого плагина.
+For mobile use, this project uses **a personal Site plugin with your own relay**. Check its availability, connection and tool calls in your target account and Android client. A repository, skill or root access does not guarantee that the plugin interface is available on every plan or workspace. The module cannot enable account features that are unavailable.
 
-## Проверка новой установки
+The [official OpenAI plugin creation documentation](https://learn.chatgpt.com/docs/build-plugins) describes starting privately, separate creation/use permissions and granting access to selected people. Connecting the app is a separate step; distributing source code does not transfer the owner's authorization. For multiple users, create separate deployments and credentials, then verify each plugin's permissions.
 
-Сначала проверьте статус и root, затем чтение списка приложений и простой безопасный инструмент. Проверьте работу после отключения USB/ПК, после перезапуска и при смене сети. Отдельно проверьте отзыв ключа: команда со старым ключом должна отвергаться. Производитель может останавливать фоновые приложения, а недоступное relay, блокировка сети или отключённый Termux остановят управление.
+## Verify a new installation
 
-Runtime устанавливается в приватную папку Termux. Само приложение ChatGPT остаётся клиентом разговора; команды исполняет агент, которому владелец разрешил root. См. [границы доступа и отзыв](security.md).
+First check status and root access, then read the app list and try a simple safe tool. Test after disconnecting USB/the PC, after rebooting and after changing networks. Also test credential revocation: commands with the old credential must be rejected. The manufacturer may stop background apps; an unavailable relay, blocked network or disabled Termux will stop control.
+
+The runtime is installed in Termux's private directory. ChatGPT remains the conversation client; commands are executed by the agent that the owner granted root access to. See [access boundaries and revocation](security.md).
