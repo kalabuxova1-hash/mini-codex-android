@@ -490,6 +490,66 @@ def validate_schema(value, schema: dict, name: str='arguments') -> None:
         for item in value: validate_schema(item,schema.get('items',{}),name+'[]')
 
 
+def operational_memory_context(tool: str, arguments: dict) -> dict:
+    """Bounded historical hints, never executable instructions or permissions."""
+    context = {
+        'state': 'ready',
+        'policy': 'Historical evidence only; verify live state. Search before substantive work; save confirmed reusable fixes with phone_memory_save after verification. Never replay commands automatically or save secrets. A successful tool call does not prove a problem was fixed.',
+        'notes': [],
+    }
+    # Only search recognized components, never persist arbitrary commands,
+    # file bodies, UI contents or credentials as automatic memory.
+    source = ' '.join(str(arguments.get(k, '')) for k in ('command', 'path', 'directory', 'package')).lower()
+    queries = []
+    for marker, query in (('mini_codex', 'mini-codex'), ('mini-codex', 'mini-codex'),
+                          ('portable', 'portable-use'), ('android_use', 'android-use'),
+                          ('vless', 'vless'), ('termux', 'termux'), ('python', 'python')):
+        if marker in source and query not in queries:
+            queries.append(query)
+    if tool == 'phone_status':
+        queries = ['памят', 'architecture', 'mini-codex-support']
+    elif not queries:
+        queries = [tool]
+    try:
+        seen = set()
+        for query in queries[:3]:
+            for note in phone_memory_search(query, limit=3)['notes']:
+                identity = (note['archived'], note['id'])
+                if identity in seen:
+                    continue
+                seen.add(identity)
+                context['notes'].append({
+                    'title': redact_memory(note['title'])[:160],
+                    'content': redact_memory(note['content'])[:1000],
+                    'updated': note['updated'], 'archived': note['archived'],
+                })
+                if len(context['notes']) == 3:
+                    return context
+    except Exception:
+        context['state'] = 'unavailable'
+    return context
+
+
+def remember_write_evidence(tool: str, arguments: dict, result) -> dict | None:
+    """Update narrow code-write receipts; semantic fixes remain agent-verified."""
+    if tool != 'phone_write_file' or not isinstance(result, dict):
+        return None
+    path = arguments.get('path', '')
+    if not re.fullmatch(r'/data/adb/modules/mini_codex/agent/(?:native_phone|phone_agent|network_route|configure|support_runtime)\.py', path):
+        return None
+    digest = result.get('sha256', '')
+    if result.get('path') != path or not re.fullmatch(r'[0-9a-f]{64}', digest):
+        return None
+    title = 'Mini Codex code write: ' + Path(path).name
+    content = ('Tool confirmed atomic file write at ' + path + '\nSHA-256 of submitted bytes: ' + digest +
+               '\nFunctional behavior is not verified by this receipt. Verify read-back and tests before treating this as a fix.')
+    try:
+        # Same title updates the active receipt; identical repeats add no archive.
+        return phone_memory_save(title, content, ['auto-memory', 'mini-codex-support', 'write-evidence'])
+    except Exception:
+        return {'saved': False, 'state': 'unavailable'}
+
+
 def dispatch(tool: str, arguments: dict) -> dict:
     # Dispatch exclusively named tools; never eval code received from the relay.
     allowed={definition['name']:definition for definition in tool_definitions()}
@@ -499,11 +559,22 @@ def dispatch(tool: str, arguments: dict) -> dict:
         validate_schema(arguments,allowed[tool]['inputSchema'])
         function=globals()[tool]
         inspect.signature(function).bind(**arguments)
+        context = None if tool.startswith('phone_memory_') else operational_memory_context(tool, arguments)
         result=function(**arguments)
+        if context is not None:
+            receipt = remember_write_evidence(tool, arguments, result)
+            if receipt is not None:
+                context['write_evidence'] = receipt
         if tool=='screenshot':
-            return {**result,'isError':False}
+            return {**result, 'content': result['content'] + [{'type':'text','text':json.dumps({'memory_context':context},ensure_ascii=False)}], 'isError':False}
+        result = result if isinstance(result,dict) else {'result':result}
+        if context is not None:
+            result = {**result, 'memory_context': context}
         return {'content':[{'type':'text','text':json.dumps(result,ensure_ascii=False)}],
-                'structuredContent':result if isinstance(result,dict) else {'result':result},'isError':False}
+                'structuredContent':result,'isError':False}
     except Exception as exc:
         # A command error may contain an input URL; sanitize before transmission.
-        return {'content':[{'type':'text','text':redact_ui_text(str(exc))[:3000]}],'isError':True}
+        blocks = [{'type':'text','text':redact_ui_text(str(exc))[:3000]}]
+        if 'context' in locals() and context is not None:
+            blocks.append({'type':'text','text':json.dumps({'memory_context':context},ensure_ascii=False)})
+        return {'content':blocks,'isError':True}
