@@ -1,4 +1,4 @@
-# Mini Codex 0.2.0: service reference
+# Codaki Mini Codex 0.2.0: service reference
 
 The release worker executes authorized tools on Android. The model in the chat makes decisions; the phone has no independent background AI model.
 
@@ -16,13 +16,13 @@ The release worker executes authorized tools on Android. The model in the chat m
 
 Start with `phone_status` and search relevant existing memory. A passport records installation metadata, not proof that a service is running. Recheck affected paths, processes and module enable markers before changing them. Refresh using the command returned by `support.refresh_command` after component changes or when stale.
 
-Network dependencies differ between owners. Check the owner's verified configuration and current routes without exporting proxy URLs or credentials. Other Android control plugins may operate a different display; do not reuse their UI coordinates in Mini Codex.
+Network dependencies differ between owners. Check the owner's verified configuration and current routes without exporting proxy URLs or credentials. Other Android control plugins may operate a different display; do not reuse their UI coordinates in Codaki Mini Codex.
 
 ## Android Use coexistence
 
-Android Use is an optional separate plugin. Known component locations are `/data/adb/android-use-relay`, its Magisk module `android_use_relay`, and `/data/local/tmp/android-use-core`. The passport checks path existence and module metadata; these checks do not prove connectivity or display availability. Mini Codex can operate without Android Use installed.
+Android Use is an optional separate plugin. Known component locations are `/data/adb/android-use-relay`, its Magisk module `android_use_relay`, and `/data/local/tmp/android-use-core`. The passport checks path existence and module metadata; these checks do not prove connectivity or display availability. Codaki Mini Codex can operate without Android Use installed.
 
-Android Use can operate a separate virtual display. Mini Codex must use its own fresh `read_ui` or screenshot and coordinates from that same surface. Do not reuse nodes, coordinates or job IDs across plugins. Select tools actually available in the conversation; installing Mini Codex does not install or connect Android Use. No shared API, automatic handoff, or simultaneous two-display operation is verified by this release.
+Android Use can operate a separate virtual display. Codaki Mini Codex must use its own fresh `read_ui` or screenshot and coordinates from that same surface. Do not reuse nodes, coordinates or job IDs across plugins. Select tools actually available in the conversation; installing Codaki Mini Codex does not install or connect Android Use. No shared API, automatic handoff, or simultaneous two-display operation is verified by this release.
 
 Stopping a network component or the worker may cut this connection. Prepare recovery before changing it. When a job is pending, use `phone_job_result`; verify an uncertain result before repeating an action. Restored connectivity requires a new successful phone operation. If the channel remains unavailable, recovery requires the owner on the phone or an independently configured connection.
 

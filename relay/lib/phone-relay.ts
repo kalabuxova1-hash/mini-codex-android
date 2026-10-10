@@ -101,7 +101,7 @@ export async function callTool(name: string, args: unknown, owner: string, reque
   const parameters = args as Record<string,unknown>;
   await maintenance();
   if (name === "phone_job_result") return jobResult(String(parameters.job_id), owner);
-  if (!(await agentState()).online) return textResult("The phone agent is offline. Start Mini Codex on the phone; a PC is not needed. No command was queued.",true);
+  if (!(await agentState()).online) return textResult("The phone agent is offline. Start Codaki Mini Codex on the phone; a PC is not needed. No command was queued.",true);
   const outstanding = await db().prepare("SELECT COUNT(*) AS n FROM phone_jobs WHERE state IN ('queued','running')").first<{n:number}>();
   if ((outstanding?.n || 0) >= 8) return textResult("Phone queue is full. Check outstanding jobs before issuing more commands.",true);
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify([owner,requestId,name,args])));

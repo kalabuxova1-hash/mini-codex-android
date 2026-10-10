@@ -1,14 +1,14 @@
-# Mini Codex for Android — facts for independent reviewers
+# Codaki Mini Codex for Android — facts for independent reviewers
 
 > This document is authored by the project team. It is a **primary source**, not an independent review or evidence of Wikipedia notability.
 
 ## Project summary
 
-**Mini Codex** is an independent open-source project for controlling the owner's Android phone from a personal ChatGPT plugin. Commands execute **on the Android phone itself**, not on a connected desktop. After setup, normal operation does not require a running PC, USB, desktop ADB or scrcpy. **Not an official OpenAI product.**
+**Codaki Mini Codex** is an independent open-source project for controlling the owner's Android phone from a personal ChatGPT plugin. Commands execute **on the Android phone itself**, not on a connected desktop. After setup, normal operation does not require a running PC, USB, desktop ADB or scrcpy. **Not an official OpenAI product.**
 
-Repository: https://github.com/kalabuxova1-hash/mini-codex-android
+Repository: https://github.com/kalabuxova1-hash/codaki-mini-codex
 
-Release: https://github.com/kalabuxova1-hash/mini-codex-android/releases/latest
+Release: https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest
 
 License: MIT.
 

@@ -106,7 +106,7 @@ def run(*args):
     try:
         p=subprocess.run(args,check=False,capture_output=True,text=True,timeout=12)
     except subprocess.TimeoutExpired: raise Denied("Android command timeout")
-    if "Permission Denial" in p.stdout: raise Denied("System permission denied; requires authorized Mini Codex broker")
+    if "Permission Denial" in p.stdout: raise Denied("System permission denied; requires authorized Codaki Mini Codex broker")
     if p.returncode:raise Denied("Android refused command: "+(p.stderr or p.stdout)[-150:])
     return p.stdout
 

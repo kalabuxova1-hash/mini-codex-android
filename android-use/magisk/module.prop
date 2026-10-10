@@ -1,6 +1,6 @@
 id=android_use_relay
-name=Android Use - Mini Codex helper
+name=Android Use - Codaki Mini Codex helper
 version=0.0.1
 versionCode=1
-author=Mini Codex Android contributors
-description=Private virtual-display companion for Mini Codex; owner-provided root and Magisk required.
+author=Codaki Mini Codex Android contributors
+description=Private virtual-display companion for Codaki Mini Codex; owner-provided root and Magisk required.

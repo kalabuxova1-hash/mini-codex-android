@@ -1,6 +1,6 @@
-# Android Use 0.0.1 — Mini Codex companion
+# Android Use 0.0.1 — Codaki Mini Codex companion
 
-**Android Use** is an optional Android screen-control plugin that complements [Mini Codex Android](https://github.com/kalabuxova1-hash/mini-codex-android). Mini Codex manages phone-side tasks; Android Use adds its own isolated, trusted **virtual display** for GUI actions without taking over the physical screen.
+**Android Use** is an optional Android screen-control plugin that complements [Codaki Mini Codex Android](https://github.com/kalabuxova1-hash/codaki-mini-codex). Codaki Mini Codex manages phone-side tasks; Android Use adds its own isolated, trusted **virtual display** for GUI actions without taking over the physical screen.
 
 ### What it does
 
@@ -11,9 +11,9 @@
 - Keeps UI actions scoped to the verified independent display: physical display 0 is not a fallback.
 - Connects through the owner's private outbound HTTPS relay and supports operation after initial setup without a running PC.
 
-### Why it matters for Mini Codex
+### Why it matters for Codaki Mini Codex
 
-Mini Codex can continue managing the phone while Android Use handles app interfaces on another display. This reduces disruption to the owner's foreground session. The services are separate and optional: Android Use is **not** bundled into Mini Codex's own installation.
+Codaki Mini Codex can continue managing the phone while Android Use handles app interfaces on another display. This reduces disruption to the owner's foreground session. The services are separate and optional: Android Use is **not** bundled into Codaki Mini Codex's own installation.
 
 ### Install through Codex on a PC
 

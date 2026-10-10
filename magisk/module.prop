@@ -1,6 +1,6 @@
 id=mini_codex
-name=MiniCodex Android Agent
+name=Codaki Mini Codex Android Agent
 version=0.2.0
 versionCode=20001
-author=MiniCodex contributors
-description=Mini Codex 0.2.0: device support, verified inventory and root phone tools through your own authenticated private relay. Requires Termux Python and local configuration; outbound HTTPS only.
+author=Codaki Mini Codex contributors
+description=Codaki Mini Codex 0.2.0: device support, verified inventory and root phone tools through your own authenticated private relay. Requires Termux Python and local configuration; outbound HTTPS only.

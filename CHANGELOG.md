@@ -6,7 +6,7 @@ English | [Русский](CHANGELOG.ru.md)
 
 Installation now starts by handing the release ZIP to Codex. The ZIP includes `INSTALL_WITH_CODEX.md`: an explicit device/ADB workflow, private relay setup and verification. This requires actual device tools and existing root/Magisk/Termux Python; it is not an autonomous AI installer.
 
-The owner-designated Mini Codex 0.2.0 release adds built-in device support. `phone_status` supplies the support guide, timestamped device inventory, reference paths and a refresh command. Inventory is generated locally for each owner's phone from OS properties, package metadata, Magisk modules and path existence; no personal passport is distributed.
+The owner-designated Codaki Mini Codex 0.2.0 release adds built-in device support. `phone_status` supplies the support guide, timestamped device inventory, reference paths and a refresh command. Inventory is generated locally for each owner's phone from OS properties, package metadata, Magisk modules and path existence; no personal passport is distributed.
 
 Android Use coexistence is documented: known component paths are inventoried and tools must use fresh data from their own display. Coordinates and jobs cannot be shared across plugins. This adds component awareness and guidance, not a common API or automatic switching; simultaneous two-display operation has not been independently verified.
 

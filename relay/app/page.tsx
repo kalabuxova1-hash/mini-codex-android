@@ -6,10 +6,10 @@ type HomeProps = { searchParams: Promise<{ lang?: string | string[] }> };
 
 const copy = {
   en: {
-    title: "Mini Codex 0.2.0 — phone",
+    title: "Codaki Mini Codex 0.2.0 — phone",
     description: "A personal agent for phone control and compressed task memory.",
     eyebrow: "Personal tool",
-    heading: "Mini Codex 0.2.0",
+    heading: "Codaki Mini Codex 0.2.0",
     intro: "Control your phone from ChatGPT.",
     phone: "Phone",
     online: "Agent connected",
@@ -19,15 +19,15 @@ const copy = {
     storage: "Short notes and compressed archives — up to 5 GiB in total. Storage fills gradually; the oldest records are removed when the limit is reached.",
     preferences: "Memory stores preferences and verified ways to complete tasks.",
     connection: "Connect to ChatGPT",
-    plugin: 'Add your personal “Mini Codex — phone” plugin and select it in the conversation. Start with “Check my phone’s status.”',
+    plugin: 'Add your personal “Codaki Mini Codex — phone” plugin and select it in the conversation. Start with “Check my phone’s status.”',
     open: "Open ChatGPT plugins",
-    footnote: "Access is tied to your account. To stop the agent, disable the Mini Codex module in Magisk.",
+    footnote: "Access is tied to your account. To stop the agent, disable the Codaki Mini Codex module in Magisk.",
   },
   ru: {
-    title: "Мини Codex 0.2.0 — телефон",
+    title: "Codaki Mini Codex 0.2.0 — телефон",
     description: "Личный агент для управления телефоном и сжатой памяти задач.",
     eyebrow: "Личный инструмент",
-    heading: "Мини Codex 0.2.0",
+    heading: "Codaki Mini Codex 0.2.0",
     intro: "Управление твоим телефоном из ChatGPT.",
     phone: "Телефон",
     online: "Агент подключён",
@@ -37,9 +37,9 @@ const copy = {
     storage: "Краткие заметки и сжатые архивы — вместе до 5 GiB. Место заполняется постепенно; самые старые записи удаляются при достижении лимита.",
     preferences: "В памяти сохраняются предпочтения и проверенные способы выполнения задач.",
     connection: "Подключение к ChatGPT",
-    plugin: "Добавь личный плагин «Мини Codex — телефон» и выбери его в разговоре. Начни с команды «Проверь состояние моего телефона».",
+    plugin: "Добавь личный плагин «Codaki Mini Codex — телефон» и выбери его в разговоре. Начни с команды «Проверь состояние моего телефона».",
     open: "Открыть плагины ChatGPT",
-    footnote: "Доступ закреплён за твоим аккаунтом. Агент можно остановить, отключив модуль «Мини Codex» в Magisk.",
+    footnote: "Доступ закреплён за твоим аккаунтом. Агент можно остановить, отключив модуль «Codaki Mini Codex» в Magisk.",
   },
 };
 

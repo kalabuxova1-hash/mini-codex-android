@@ -1,12 +1,12 @@
-# Mini Codex Android — autonomous AI phone agent for ChatGPT (no PC required)
+# Codaki Mini Codex Android — autonomous AI phone agent for ChatGPT (no PC required)
 
 English | [Русский](README.ru.md)
 
-Also known as **MiniCodex Android** or **Миникодекс** in Russian. This project focuses on on-device Android control from ChatGPT rather than remote control of a desktop Codex installation.
+Also known as **Codaki Mini Codex Android** or **Миникодекс** in Russian. This project focuses on on-device Android control from ChatGPT rather than remote control of a desktop Codex installation.
 
-**Android AI agent · ChatGPT phone control · Android automation · MCP · Termux · Magisk.** Mini Codex is an independent open-source project for controlling a rooted Android phone from ChatGPT: launch apps, inspect the screen, tap and swipe, run authorized local commands and manage files. The Python worker runs **on the phone**, communicates through the owner's authenticated private HTTPS relay, and **does not require a permanently running PC, USB or desktop ADB during normal use**. This is not the official OpenAI Codex CLI.
+**Android AI agent · ChatGPT phone control · Android automation · MCP · Termux · Magisk.** Codaki Mini Codex is an independent open-source project for controlling a rooted Android phone from ChatGPT: launch apps, inspect the screen, tap and swipe, run authorized local commands and manage files. The Python worker runs **on the phone**, communicates through the owner's authenticated private HTTPS relay, and **does not require a permanently running PC, USB or desktop ADB during normal use**. This is not the official OpenAI Codex CLI.
 
-**Current version: Mini Codex 0.2.0 (`0.2.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [0.2.0 changelog](CHANGELOG.md).
+**Current version: Codaki Mini Codex 0.2.0 (`0.2.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [0.2.0 changelog](CHANGELOG.md).
 
 ### What changed in 0.2.0
 
@@ -16,15 +16,15 @@ Also known as **MiniCodex Android** or **Миникодекс** in Russian. This
 - Experience accumulation reuses existing memory to retrieve previous solutions and save short confirmed lessons. It adds no second history store or model-weight training.
 - The panel and Magisk display version 0.2.0; upgrades retain connection settings, memory and the job journal.
 
-### Using Android Use alongside Mini Codex
+### Using Android Use alongside Codaki Mini Codex
 
-The support guide accounts for the optional **Android Use** plugin. Inventory checks known relay/core paths and Magisk module metadata when present. Android Use can operate a separate virtual display; Mini Codex uses the screen returned by its own tools. Obtain fresh UI data from the selected plugin and never transfer coordinates, nodes or job IDs between them.
+The support guide accounts for the optional **Android Use** plugin. Inventory checks known relay/core paths and Magisk module metadata when present. Android Use can operate a separate virtual display; Codaki Mini Codex uses the screen returned by its own tools. Obtain fresh UI data from the selected plugin and never transfer coordinates, nodes or job IDs between them.
 
-Install and connect Android Use separately; Mini Codex does not require it. Version 0.2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
+Install and connect Android Use separately; Codaki Mini Codex does not require it. Version 0.2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
 
-**Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
+**Codaki Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
 
-Mini Codex is an independent, open-source Android agent that lets the owner request supported phone operations from ChatGPT. A local Python worker in Termux, started by a Magisk module, polls the owner's **private HTTPS relay** and executes authorized commands **on the Android phone**. The computer can be completely powered off during normal operation.
+Codaki Mini Codex is an independent, open-source Android agent that lets the owner request supported phone operations from ChatGPT. A local Python worker in Termux, started by a Magisk module, polls the owner's **private HTTPS relay** and executes authorized commands **on the Android phone**. The computer can be completely powered off during normal operation.
 
 ### PC-free Android operation
 
@@ -33,7 +33,7 @@ ChatGPT (mobile or other supported client)
      ↕ owner's personal plugin
 Private HTTPS relay (online service)
      ↕ authenticated outbound requests
-Android phone: Mini Codex worker + Magisk + Termux
+Android phone: Codaki Mini Codex worker + Magisk + Termux
      ↓
 Android UI, installed apps, filesystem and root commands
 ```
@@ -56,14 +56,14 @@ For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 
 - Android with **root and Magisk already installed**. You install root yourself; this project does not distribute firmware, drivers or bootloader unlocking tools.
 - Official [Termux](https://github.com/termux/termux-app/releases) with Python.
-- A personal Mini Codex plugin connection to your ChatGPT account and your own private server.
+- A personal Codaki Mini Codex plugin connection to your ChatGPT account and your own private server.
 
 ## Install with Codex
 
-1. Download `mini-codex-magisk-0.2.0.zip` from the [latest release](https://github.com/kalabuxova1-hash/mini-codex-android/releases/latest) together with `SHA256SUMS`.
+1. Download `mini-codex-magisk-0.2.0.zip` from the [latest release](https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest) together with `SHA256SUMS`.
 2. Give the ZIP and checksum to Codex and send:
 
-   > Install Mini Codex 0.2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
+   > Install Codaki Mini Codex 0.2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
 
 3. If Codex already has an authorized phone-control channel, it can use it. Otherwise connect the phone to the computer running Codex and approve USB debugging. Codex handles the supported installation and configuration steps; Android may require you to unlock after reboot.
 
@@ -77,7 +77,7 @@ Reviewers and journalists can use the [English fact sheet and reproducible PC-fr
 
 ## Support development
 
-You can support Mini Codex with a voluntary donation on [Boosty](https://boosty.to/mini_codexandroid). Donations help with development, compatibility testing, bug fixes, and documentation. Source code and public releases remain free under the MIT license.
+You can support Codaki Mini Codex with a voluntary donation on [Boosty](https://boosty.to/mini_codexandroid). Donations help with development, compatibility testing, bug fixes, and documentation. Source code and public releases remain free under the MIT license.
 
 ## What to know
 
@@ -85,7 +85,7 @@ The author's current personal plugin is not a shared server for other people's p
 
 Agent memory and operational records are limited to **5 GiB**. Arbitrary downloads and files written by root commands are outside this budget. Memory stores notes between tasks; it does not train model weights.
 
-To stop control, disable the Mini Codex module in Magisk. Removing the module preserves memory and configuration. Do not share credentials or access to your personal plugin.
+To stop control, disable the Codaki Mini Codex module in Magisk. Removing the module preserves memory and configuration. Do not share credentials or access to your personal plugin.
 
 Verified agent configuration: Redmi Turbo 3, Android 16, Magisk and Termux. The new public ZIP was checked with host tests and a mock environment; it was not installed over the author's working personal installation. Other devices require verification.
 
