@@ -130,6 +130,11 @@ async function device(request: Request): Promise<Link> {
 }
 export async function api(request: Request, args: Record<string, unknown>): Promise<Response> {
   await maintain();
+  if (args.action === "invite") {
+    if (request.headers.get("origin") !== new URL(request.url).origin) throw new Error("Same-origin invitation required");
+    const reply = await callBridge("mini_pc_invite", args);
+    return json(JSON.parse(reply.content[0].text));
+  }
   if (args.action === "pair") {
     const code = text(args.code); const token = text(args.token);
     if (!/^[a-f0-9]{64}$/.test(token)) throw new Error("Strong device credential required");

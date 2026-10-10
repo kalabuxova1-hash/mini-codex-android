@@ -5,6 +5,22 @@ import { DatabaseSync } from "node:sqlite";
 import { randomUUID } from "node:crypto";
 import ts from "typescript";
 
+test('browser installer invitations require same-origin and the pinned owner',async()=>{
+  const f=await fixture();try {
+    const request=origin=>new Request('https://relay.invalid/bridge/api',{method:'POST',headers:origin?{origin}:{}});
+    const args={action:'invite',email:'pc@example.com',phone_access:true};
+    await assert.rejects(f.bridge.api(request(),args));
+    await assert.rejects(f.bridge.api(request('https://foreign.invalid'),args));
+    const invite=await (await f.bridge.api(request('https://relay.invalid'),args)).json();
+    assert.equal(invite.email,'pc@example.com');assert.ok(invite.code);
+    assert.equal(f.sqlite.prepare('SELECT state FROM pc_links WHERE id=?').get(invite.connection_id).state,'invited');
+    f.context.user={userId:'foreign-owner',email:'pc@example.com'};
+    await assert.rejects(f.bridge.api(request('https://relay.invalid'),args));
+    f.context.user=null;
+    await assert.rejects(f.bridge.api(request('https://relay.invalid'),args));
+  }finally{f.close();}
+});
+
 async function fixture() {
   const sqlite = new DatabaseSync(":memory:");
   for (const name of ["0000_clear_the_call.sql", "0001_hesitant_raza.sql"]) sqlite.exec(await readFile(new URL("../drizzle/"+name, import.meta.url), "utf8"));
