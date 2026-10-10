@@ -81,7 +81,7 @@ Codaki AI combines ChatGPT phone control and Android automation: a Python worker
 <details>
 <summary><strong>Show the installation prompt for Codex</strong></summary>
 
-> Install Codaki Mini Codex 0.2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
+> Install Codaki Mini Codex 0.2.3 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
 
 If Codex already has an authorized phone-control channel, it can use it. Otherwise connect the phone to the computer running Codex and approve USB debugging. Codex handles the supported installation and configuration steps; Android may require you to unlock after reboot.
 
