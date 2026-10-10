@@ -33,12 +33,13 @@ def build_card(root, output, app_id=None):
     output=Path(output)
     output.mkdir(parents=True,exist_ok=True)
     target=output/(manifest['name']+'-chatgpt-'+manifest['version']+'.zip')
-    with zipfile.ZipFile(target,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
+    # Store card entries verbatim: zlib versions can produce different compressed bytes.
+    with zipfile.ZipFile(target,'w',compression=zipfile.ZIP_STORED) as archive:
         for name,data in sorted(entries.items()):
             info=zipfile.ZipInfo(name,(2026,10,10,0,0,0))
             info.create_system=3
             info.external_attr=0o100644<<16
-            info.compress_type=zipfile.ZIP_DEFLATED
+            info.compress_type=zipfile.ZIP_STORED
             archive.writestr(info,data)
     return target
 
