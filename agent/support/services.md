@@ -1,4 +1,4 @@
-# Mini Codex 2.0: service reference
+# Mini Codex 0.2.0: service reference
 
 The release worker executes authorized tools on Android. The model in the chat makes decisions; the phone has no independent background AI model.
 

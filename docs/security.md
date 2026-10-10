@@ -31,7 +31,7 @@ Before publishing, check the source directory and built archive:
 
 ```sh
 python tests/test_release_safety.py --scan .
-python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
+python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.2.0.zip
 python tests/test_release_safety.py
 ```
 

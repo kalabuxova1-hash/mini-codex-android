@@ -6,10 +6,10 @@ type HomeProps = { searchParams: Promise<{ lang?: string | string[] }> };
 
 const copy = {
   en: {
-    title: "Mini Codex 2.0 — phone",
+    title: "Mini Codex 0.2.0 — phone",
     description: "A personal agent for phone control and compressed task memory.",
     eyebrow: "Personal tool",
-    heading: "Mini Codex 2.0",
+    heading: "Mini Codex 0.2.0",
     intro: "Control your phone from ChatGPT.",
     phone: "Phone",
     online: "Agent connected",
@@ -24,10 +24,10 @@ const copy = {
     footnote: "Access is tied to your account. To stop the agent, disable the Mini Codex module in Magisk.",
   },
   ru: {
-    title: "Мини Codex 2.0 — телефон",
+    title: "Мини Codex 0.2.0 — телефон",
     description: "Личный агент для управления телефоном и сжатой памяти задач.",
     eyebrow: "Личный инструмент",
-    heading: "Мини Codex 2.0",
+    heading: "Мини Codex 0.2.0",
     intro: "Управление твоим телефоном из ChatGPT.",
     phone: "Телефон",
     online: "Агент подключён",

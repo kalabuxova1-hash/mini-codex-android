@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 import zipfile
 
-VERSION='2.0.0'
+VERSION='0.2.0'
 ROOT=Path(__file__).resolve().parents[1]
 MODULE_FILES=('module.prop','skip_mount','customize.sh','service.sh','stop.sh','uninstall.sh','configure.sh','INSTALL_WITH_CODEX.md')
 AGENT_FILES=('native_phone.py','phone_agent.py','tool-definitions.json','configure.py','support_runtime.py','support/SKILL.md','support/services.md')

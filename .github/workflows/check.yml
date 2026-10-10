@@ -18,7 +18,7 @@ jobs:
       - run: python -m unittest discover -s tests -p '*.py'
       - run: python scripts/build_release.py
       - run: python tests/test_release_safety.py --scan .
-      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
+      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.2.0.zip
   relay:
     runs-on: ubuntu-latest
     defaults:
@@ -54,15 +54,15 @@ jobs:
         with:
           python-version: '3.14'
       - run: python scripts/build_release.py
-      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
-      - name: Publish verified Mini Codex 2.0 release
+      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.2.0.zip
+      - name: Publish verified Mini Codex 0.2.0 release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if gh release view v2.0.0 >/dev/null 2>&1; then
-            echo 'Existing v2.0.0 release retained.'
+          if gh release view v0.2.0 >/dev/null 2>&1; then
+            echo 'Existing v0.2.0 release retained.'
           else
-            gh release create v2.0.0 dist/mini-codex-magisk-2.0.0.zip dist/SHA256SUMS \
-              --target "$GITHUB_SHA" --title 'Mini Codex 2.0' --notes-file CHANGELOG.md
+            gh release create v0.2.0 dist/mini-codex-magisk-0.2.0.zip dist/SHA256SUMS \
+              --target "$GITHUB_SHA" --title 'Mini Codex 0.2.0' --notes-file CHANGELOG.md
           fi

@@ -41,6 +41,6 @@ See [Android installation](install-android.md), [private relay](deploy-private-r
 5. Repeat after reboot/first unlock and with screen off, new network, and different background power policies.
 6. Revoke relay credentials and verify old credentials no longer work.
 
-**Current scope:** author's personal use on Redmi Turbo 3 / Android 16 / root. The public v2.0.0 ZIP passed host/mock checks, not a full deployment over the author's working installation. Other devices need independent testing.
+**Current scope:** author's personal use on Redmi Turbo 3 / Android 16 / root. The public v0.2.0 ZIP passed host/mock checks, not a full deployment over the author's working installation. Other devices need independent testing.
 
 Independent critical reviews are welcome; editorial independence and reporting of negative outcomes must be respected. The repository, its press materials and reposts are not independent sources for encyclopedic notability. No unverified world's-first/only claim is made.

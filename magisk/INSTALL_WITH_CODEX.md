@@ -1,10 +1,10 @@
-# Install Mini Codex 2.0 with Codex / Установка через Codex
+# Install Mini Codex 0.2.0 with Codex / Установка через Codex
 
 Give this ZIP to Codex and say / Передайте ZIP в Codex и напишите:
 
-> Установи Mini Codex 2.0 из этого файла на мой телефон. Прочитай INSTALL_WITH_CODEX.md внутри архива, проверь требования, настрой мой собственный приватный relay и плагин и проверь подключение. Используй доступные инструменты телефона; если их нет, установи через авторизованный ADB. Сохрани существующую конфигурацию и память при обновлении. Не устанавливай root и не разблокируй загрузчик.
+> Установи Mini Codex 0.2.0 из этого файла на мой телефон. Прочитай INSTALL_WITH_CODEX.md внутри архива, проверь требования, настрой мой собственный приватный relay и плагин и проверь подключение. Используй доступные инструменты телефона; если их нет, установи через авторизованный ADB. Сохрани существующую конфигурацию и память при обновлении. Не устанавливай root и не разблокируй загрузчик.
 
-> Install Mini Codex 2.0 from this ZIP on my phone. Read the embedded INSTALL_WITH_CODEX.md, verify prerequisites, configure my own private relay and plugin, and verify the connection. Use available phone tools or authorized ADB. Preserve existing settings and memory on upgrade. Do not install root or unlock the bootloader.
+> Install Mini Codex 0.2.0 from this ZIP on my phone. Read the embedded INSTALL_WITH_CODEX.md, verify prerequisites, configure my own private relay and plugin, and verify the connection. Use available phone tools or authorized ADB. Preserve existing settings and memory on upgrade. Do not install root or unlock the bootloader.
 
 ## Instructions for Codex
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mini Codex 2.0 — phone",
+  title: "Mini Codex 0.2.0 — phone",
   description: "A personal agent for phone control and compressed task memory.",
   other: {
     "codex-preview": "development",

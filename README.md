@@ -2,21 +2,21 @@
 
 English | [Русский](README.ru.md)
 
-**Current version: Mini Codex 2.0 (`2.0.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [2.0 changelog](CHANGELOG.md).
+**Current version: Mini Codex 0.2.0 (`0.2.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [0.2.0 changelog](CHANGELOG.md).
 
-### What changed in 2.0
+### What changed in 0.2.0
 
 - A support skill guides diagnosis, service/file discovery and verification after maintenance.
 - A local passport records Android version, installed-package metadata, Magisk modules, important paths and a verification timestamp. Each owner generates their own inventory.
 - `phone_status` exposes the guide, summary, freshness flag and refresh command.
 - Experience accumulation reuses existing memory to retrieve previous solutions and save short confirmed lessons. It adds no second history store or model-weight training.
-- The panel and Magisk display version 2.0; upgrades retain connection settings, memory and the job journal.
+- The panel and Magisk display version 0.2.0; upgrades retain connection settings, memory and the job journal.
 
 ### Using Android Use alongside Mini Codex
 
 The support guide accounts for the optional **Android Use** plugin. Inventory checks known relay/core paths and Magisk module metadata when present. Android Use can operate a separate virtual display; Mini Codex uses the screen returned by its own tools. Obtain fresh UI data from the selected plugin and never transfer coordinates, nodes or job IDs between them.
 
-Install and connect Android Use separately; Mini Codex does not require it. Version 2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
+Install and connect Android Use separately; Mini Codex does not require it. Version 0.2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
 
 **Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
 
@@ -42,7 +42,7 @@ Android UI, installed apps, filesystem and root commands
 
 **Precise distinction:** "without a PC" describes **day-to-day operation after setup**, not a promise that every phone can be rooted or initially prepared without a computer. The system still requires internet access, a functioning private relay, a compatible ChatGPT plugin/account and locally installed root/Termux. This is not a fully offline autonomous AI; it executes requests through ChatGPT. The worker does not bypass a secure lock screen, and a separate hidden virtual display is not a verified release feature.
 
-**Verified scope:** personal use on a rooted Redmi Turbo 3 / Android 16. The public v2.0.0 release ZIP was checked by host and mocked tests but not installed over the working personal installation. Other devices and background behaviour require testing.
+**Verified scope:** personal use on a rooted Redmi Turbo 3 / Android 16. The public v0.2.0 release ZIP was checked by host and mocked tests but not installed over the working personal installation. Other devices and background behaviour require testing.
 
 For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 
@@ -56,10 +56,10 @@ For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 
 ## Install with Codex
 
-1. Download `mini-codex-magisk-2.0.0.zip` from the [latest release](https://github.com/kalabuxova1-hash/mini-codex-android/releases/latest) together with `SHA256SUMS`.
+1. Download `mini-codex-magisk-0.2.0.zip` from the [latest release](https://github.com/kalabuxova1-hash/mini-codex-android/releases/latest) together with `SHA256SUMS`.
 2. Give the ZIP and checksum to Codex and send:
 
-   > Install Mini Codex 2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
+   > Install Mini Codex 0.2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
 
 3. If Codex already has an authorized phone-control channel, it can use it. Otherwise connect the phone to the computer running Codex and approve USB debugging. Codex handles the supported installation and configuration steps; Android may require you to unlock after reboot.
 
