@@ -1,5 +1,7 @@
 # Codaki
 
+![Codaki — Desktop freedom. Android.](docs/assets/codaki-cover.png)
+
 **Mini Codex Android · Миникодекс**
 
 **English** · [Русский](README.ru.md) &nbsp; | &nbsp; **v0.2.0** · [MIT](LICENSE)
@@ -7,6 +9,8 @@
 **Codaki Mini Codex Android is an AI agent for controlling your phone through ChatGPT.** Launch apps, inspect the screen, manage files and automate tasks on a rooted Android phone. The project is also known as **Миникодекс** in Russian.
 
 **Codaki runs on the phone itself, without a permanently running PC.** After setup, normal use requires no USB or desktop ADB connection. You still need internet access, your own private HTTPS server and a ChatGPT plugin supported by your account.
+
+**Desktop freedom. Android.** Codaki aims to bring Codex-like freedom of action to your phone: apps, files and authorized system commands, controlled from an ordinary ChatGPT conversation through your personal plugin.
 
 [Install Codaki](#codaki-install) · [Features](#codaki-features) · [Documentation](#codaki-docs) · [Download release](https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest)
 
@@ -90,6 +94,17 @@ The ZIP does not root the phone, install Termux or turn a phone-only chat into a
 ## <img src="docs/assets/icons/book.svg" width="36" height="36" alt=""> Codaki documentation
 
 Details are grouped by topic — open the section you need.
+
+<details>
+<summary><strong>Ordinary ChatGPT chat, ongoing use and usage costs</strong></summary>
+
+Control the phone through your personal Codaki plugin in a supported ChatGPT chat. Codaki's phone worker executes actions locally; it does not run a second model API session. The supported ChatGPT plugin flow needs no separate OpenAI API key, and Codaki itself adds no per-token fee.
+
+Continue with new tasks and reuse saved solutions between conversations. This is designed for ongoing use after setup, not a guarantee of an infinitely long chat or uninterrupted background work. ChatGPT still uses tokens and context, and your account's [usage limits](https://learn.chatgpt.com/docs/pricing) still apply. Private relay hosting may have its own costs.
+
+The goal is broad phone access comparable in spirit to Codex on a PC. Android permissions, supported tools and device compatibility determine the actual scope; feature parity with desktop Codex is not claimed.
+
+</details>
 
 <details>
 <summary><strong>How Codaki controls Android without a PC</strong></summary>
