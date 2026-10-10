@@ -1,4 +1,4 @@
-# Codaki
+# Codaki — autonomous AI agent for Android (Mini Codex)
 
 ![Codaki — Desktop freedom. Android.](docs/assets/codaki-cover.png)
 
@@ -6,11 +6,13 @@
 
 **English** · [Русский](README.ru.md) &nbsp; | &nbsp; **v0.2.0** · [MIT](LICENSE)
 
-**Codaki Mini Codex Android is an AI agent for controlling your phone through ChatGPT.** Launch apps, inspect the screen, manage files and automate tasks on a rooted Android phone. The project is also known as **Миникодекс** in Russian.
+**Codaki AI · Mini Codex Android is an AI agent for controlling your phone through ChatGPT.** Launch apps, inspect the screen, manage files and automate tasks on a rooted Android phone. The project is also known as **Codaki ИИ** and **Миникодекс** in Russian.
 
 **Codaki runs on the phone itself, without a permanently running PC.** After setup, normal use requires no USB or desktop ADB connection. You still need internet access, your own private HTTPS server and a ChatGPT plugin supported by your account.
 
 **Desktop freedom. Android.** Codaki aims to bring Codex-like freedom of action to your phone: apps, files and authorized system commands, controlled from an ordinary ChatGPT conversation through your personal plugin.
+
+**Codaki AI on GitHub:** this repository contains **Mini Codex**, the phone-resident agent and private MCP server. [Codaki Android Use](https://github.com/kalabuxova1-hash/codaki-android-use) is a separate companion project for controlling Android from a computer. Here, autonomous operation means running the phone worker without a permanently running PC; ChatGPT supplies the AI decisions.
 
 [Install Codaki](#codaki-install) · [Features](#codaki-features) · [Documentation](#codaki-docs) · [Download release](https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest)
 
@@ -18,7 +20,7 @@
 
 <a name="codaki-features"></a>
 
-## What Codaki can do
+## What Codaki AI can do
 
 <table>
 <tr>
@@ -50,7 +52,7 @@
 </tr>
 </table>
 
-Codaki combines ChatGPT phone control and Android automation: a Python worker in **Termux**, startup through **Magisk** and a personal **MCP** plugin connection.
+Codaki AI combines ChatGPT phone control and Android automation: a Python worker in **Termux**, startup through **Magisk** and a private **MCP server (Model Context Protocol)** for the personal ChatGPT plugin. The language model plans tasks; the phone worker executes authorized actions.
 
 <br>
 
@@ -86,6 +88,8 @@ The ZIP does not root the phone, install Termux or turn a phone-only chat into a
 **Initial setup may require a computer.** PC-free operation describes day-to-day use after setup.
 
 [Installation and manual setup](docs/install-android.md) · [Private server setup](docs/deploy-private-relay.md)
+
+The root [`mcp.json`](mcp.json) provides an HTTP endpoint configuration template for the private MCP server. Replace its example URL only in your private copy and follow the [connection and authentication notes](docs/deploy-private-relay.md#mcp-configuration-template).
 
 <br>
 

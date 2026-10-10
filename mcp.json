@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "codaki-mini-codex": {
+      "type": "http",
+      "url": "https://your-private-relay.example/mcp"
+    }
+  }
+}

@@ -50,6 +50,16 @@ After starting the agent, check `phone_status`, followed by a fresh `read_ui` or
 
 After verification, the agent does not need a computer: the phone polls your personal relay over HTTPS. Internet, a working root environment and the agent service must remain available. Check personal plugin availability in your specific mobile client after connection; these sources do not promise support for every ChatGPT version.
 
+<a name="mcp-configuration-template"></a>
+
+## Codaki AI MCP configuration template
+
+The root [`mcp.json`](../mcp.json) describes the relay's `/mcp` HTTP endpoint using the `servers` configuration format documented by [VS Code](https://code.visualstudio.com/docs/agent-customization/mcp-servers). Its `.example` URL is a placeholder, not a hosted service. The root file is a reference template; it is not automatically loaded as a ChatGPT plugin. Clients use different configuration locations and formats.
+
+Replace the URL with your own private relay's HTTPS URL ending in `/mcp` only in a private copy. The supported ChatGPT connection remains the personal plugin created by Sites, as described above. Keep Sites authentication and the owner pin in place. `PHONE_AGENT_TOKEN` and the phone's Sites bypass are for the phone worker; neither authenticates an MCP client as the ChatGPT owner. Do not put those secrets in `mcp.json` or GitHub.
+
+The endpoint template does not establish compatibility or authentication with other MCP clients; those require separate verification. It is not a legacy `ai-plugin.json` manifest or an MCP Registry submission, and its presence does not guarantee search or AI-crawler indexing.
+
 ## Check sources before deployment
 
 Requires Node.js 22.13 or newer. From the `relay` directory:
