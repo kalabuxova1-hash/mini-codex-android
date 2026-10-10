@@ -2,6 +2,8 @@
 
 English | [Русский](README.ru.md)
 
+Also known as **MiniCodex Android** or **Миникодекс** in Russian. This project focuses on on-device Android control from ChatGPT rather than remote control of a desktop Codex installation.
+
 **Android AI agent · ChatGPT phone control · Android automation · MCP · Termux · Magisk.** Mini Codex is an independent open-source project for controlling a rooted Android phone from ChatGPT: launch apps, inspect the screen, tap and swipe, run authorized local commands and manage files. The Python worker runs **on the phone**, communicates through the owner's authenticated private HTTPS relay, and **does not require a permanently running PC, USB or desktop ADB during normal use**. This is not the official OpenAI Codex CLI.
 
 **Current version: Mini Codex 0.2.0 (`0.2.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [0.2.0 changelog](CHANGELOG.md).
