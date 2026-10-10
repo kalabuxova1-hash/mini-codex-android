@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "codaki-mini-codex",
+  "version": "0.2.1",
+  "description": "Управление своим Android, файлами и системными задачами через личный сервер.",
+  "author": {
+    "name": "Codaki contributors"
+  },
+  "repository": "https://github.com/kalabuxova1-hash/codaki-mini-codex",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "onboardingSkill": "./skills/setup/SKILL.md",
+      "interface": {
+        "displayName": "Codaki Mini Codex — телефон",
+        "shortDescription": "Управление своим Android, файлами и системными задачами через личный сервер.",
+        "longDescription": "Управление своим Android, файлами и системными задачами через личный сервер. Установка карточки и подключение личного телефона выполняются отдельно.",
+        "developerName": "Codaki",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://github.com/kalabuxova1-hash/codaki-mini-codex",
+        "defaultPrompt": [
+          "Помоги настроить мой телефон для Codaki Mini Codex — телефон."
+        ],
+        "brandColor": "#6EF0BA",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png"
+      }
+    }
+  }
+}

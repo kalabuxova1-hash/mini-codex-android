@@ -2,6 +2,12 @@
 
 [English](CHANGELOG.md) | Русский
 
+## 0.2.1
+
+Includes an update skill: give GPT a newer ZIP to prepare/apply an update while preserving the existing App reference, private relay and phone state.
+
+Packaging update: include the portable ChatGPT card ZIP, icon, setup/control skills and card builder inside the Magisk installer and as a separate release download. Public cards have no owner App ID or device pairing; an owner-specific App reference can be built privately after relay setup. Checksums cover both archives. The phone runtime and module remain 0.2.0; no device code or existing owner configuration changes.
+
 ## 0.2.0
 
 Основной способ установки — передать ZIP в Codex. В архив включён `INSTALL_WITH_CODEX.md`: работа через доступный канал устройства или ADB, настройка собственного приватного relay и проверка связи. Нужны реальные инструменты управления и заранее установленные root/Magisk/Termux с Python; это не отдельный автономный AI-установщик.

@@ -4,7 +4,7 @@
 
 **Mini Codex Android · Миникодекс**
 
-**English** · [Русский](README.ru.md) &nbsp; | &nbsp; **v0.2.0** · [MIT](LICENSE)
+**English** · [Русский](README.ru.md) &nbsp; | &nbsp; **v0.2.1** · [MIT](LICENSE)
 
 **Codaki AI · Mini Codex Android is an AI agent for controlling your phone through ChatGPT.** Launch apps, inspect the screen, manage files and automate tasks on a rooted Android phone. The project is also known as **Codaki ИИ** and **Миникодекс** in Russian.
 
@@ -68,11 +68,13 @@ Codaki AI combines ChatGPT phone control and Android automation: a Python worker
 
 ### Install with Codex
 
-1. **Download the Codaki release.** Get `mini-codex-magisk-0.2.0.zip` and `SHA256SUMS` from the [latest release](https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest).
+1. **Download the Codaki release.** Get `mini-codex-magisk-0.2.1.zip` and `SHA256SUMS` from the [latest release](https://github.com/kalabuxova1-hash/codaki-mini-codex/releases/latest).
 
 2. **Give the files to Codex.** Ask it to check requirements, install the module and configure your private server and plugin. A ready-to-use prompt is below.
 
 3. **Check the connection.** Select your personal “Codaki Mini Codex — phone” plugin in ChatGPT and ask: “Check my phone's status.”
+
+**ChatGPT card ZIP:** [download `codaki-mini-codex-chatgpt-0.2.1.zip`](chatgpt/codaki-mini-codex-chatgpt-0.2.1.zip). It is also bundled inside the installer under `chatgpt/`. Import adds the workflows; connect your own phone after installation. The public ZIP has no author-specific App ID or device pairing. [Connect the card to your own server](chatgpt/README.md).
 
 <details>
 <summary><strong>Show the installation prompt for Codex</strong></summary>
@@ -84,6 +86,14 @@ If Codex already has an authorized phone-control channel, it can use it. Otherwi
 The ZIP does not root the phone, install Termux or turn a phone-only chat into an ADB host. The embedded instructions are a workflow for Codex with actual device tools, not an independent installer AI. Firmware, drivers and bootloader unlocking tools are not distributed here.
 
 </details>
+
+### Update with GPT
+
+**A new version is out → download the new ZIP → give the file to GPT → ask it to update the plugin.**
+
+> Update this Codaki plugin from the new ZIP. Keep my phone connection, private server, keys, memory and journal. Check the version and checksum, update the existing card, and verify the connection. If this is the full installer, also update the phone components using INSTALL_WITH_CODEX.md.
+
+The bundled update workflow retains your existing App reference and ChatGPT owner binding. A card-only update leaves the phone runtime unchanged. GPT uses the client's available update/import tools; if the client requires a manual import, it prepares the replacement ZIP and tells you that final step. The file must come from this project's Releases. [Card setup and updates](chatgpt/README.md).
 
 **Initial setup may require a computer.** PC-free operation describes day-to-day use after setup.
 

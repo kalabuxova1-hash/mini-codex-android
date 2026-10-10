@@ -31,7 +31,7 @@ Codaki Mini Codex выполняет команды владельца на Andr
 
 ```sh
 python tests/test_release_safety.py --scan .
-python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.2.0.zip
+python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.2.1.zip
 python tests/test_release_safety.py
 ```
 

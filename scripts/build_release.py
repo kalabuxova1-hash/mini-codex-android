@@ -1,11 +1,15 @@
 """Build reproducible Magisk-app ZIPs without phone access or credentials."""
 import hashlib
+import importlib.util
 from pathlib import Path
 import shutil
 import zipfile
 
-VERSION='0.2.0'
+VERSION='0.2.1'
 ROOT=Path(__file__).resolve().parents[1]
+spec=importlib.util.spec_from_file_location('mini_codex_card',ROOT/'chatgpt'/'package_card.py')
+card_builder=importlib.util.module_from_spec(spec)
+spec.loader.exec_module(card_builder)
 MODULE_FILES=('module.prop','skip_mount','customize.sh','service.sh','stop.sh','uninstall.sh','configure.sh','INSTALL_WITH_CODEX.md')
 AGENT_FILES=('native_phone.py','phone_agent.py','tool-definitions.json','configure.py','support_runtime.py','support/SKILL.md','support/services.md')
 
@@ -14,15 +18,21 @@ def build(root=ROOT):
     root=Path(root)
     output=root/'dist'
     output.mkdir(exist_ok=True)
+    card=card_builder.build_card(root,output)
     target=output/f'mini-codex-magisk-{VERSION}.zip'
     entries=[(root/'magisk'/name,name) for name in MODULE_FILES]
     entries += [(root/'agent'/name,'agent/'+name) for name in AGENT_FILES]
     entries.append((root/'LICENSE','LICENSE'))
+    entries += [(root/'chatgpt'/name,'chatgpt/'+name) for name in ('package_card.py','README.md')]
+    entries += [(root/'chatgpt'/'plugin'/name,'chatgpt/plugin/'+name) for name in card_builder.FILES]
+    entries.append((card,'chatgpt/'+card.name))
     with zipfile.ZipFile(target,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
         for source,name in sorted(entries,key=lambda item:item[1]):
             if source.is_symlink() or not source.is_file():
                 raise ValueError('Release inputs must be regular files')
-            data=source.read_bytes().replace(b'\r\n',b'\n')
+            data=source.read_bytes()
+            if source.suffix not in ('.png','.zip'):
+                data=data.replace(b'\r\n',b'\n')
             info=zipfile.ZipInfo(name,(2026,1,1,0,0,0))
             info.create_system=3
             info.external_attr=(0o100755 if name.endswith('.sh') else 0o100644)<<16
@@ -33,8 +43,7 @@ def build(root=ROOT):
     for name in AGENT_FILES:
         (agent_output/name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(root/'agent'/name,agent_output/name)
-    digest=hashlib.sha256(target.read_bytes()).hexdigest()
-    (output/'SHA256SUMS').write_text(f'{digest}  {target.name}\n',encoding='utf-8')
+    (output/'SHA256SUMS').write_text(''.join(hashlib.sha256(path.read_bytes()).hexdigest()+'  '+path.name+'\n' for path in (target,card)),encoding='ascii',newline='\n')
     return target
 
 

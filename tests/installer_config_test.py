@@ -103,7 +103,7 @@ class InstallerTests(unittest.TestCase):
     def test_release_allowlist_reproducible_and_no_owner_config(self):
         target=Path(self.temp.name)/'repo'
         target.mkdir()
-        for folder in ('agent','magisk'):
+        for folder in ('agent','magisk','chatgpt'):
             shutil.copytree(ROOT/folder,target/folder)
         shutil.copyfile(ROOT/'LICENSE',target/'LICENSE')
         # Even local secret-looking files and host tests must never enter release ZIP.
@@ -113,10 +113,13 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(first,builder.build(target).read_bytes())
         with zipfile.ZipFile(artifact) as archive:
             expected=set(builder.MODULE_FILES)|{'agent/'+n for n in builder.AGENT_FILES}|{'LICENSE'}
+            expected|={'chatgpt/package_card.py','chatgpt/README.md'}|{'chatgpt/plugin/'+n for n in builder.card_builder.FILES}
+            expected.add('chatgpt/codaki-mini-codex-chatgpt-'+builder.VERSION+'.zip')
             self.assertEqual(set(archive.namelist()),expected)
             self.assertNotIn(b'DO_NOT_BUNDLE',b''.join(archive.read(n) for n in archive.namelist()))
             for name in archive.namelist():
-                self.assertNotIn(b'\r',archive.read(name))
+                if not name.endswith(('.png','.zip')):
+                    self.assertNotIn(b'\r',archive.read(name))
                 if name.endswith('.sh'):
                     self.assertEqual((archive.getinfo(name).external_attr>>16)&0o777,0o755)
         self.assertEqual((target/'dist'/'SHA256SUMS').read_text().split()[0],hashlib.sha256(first).hexdigest())

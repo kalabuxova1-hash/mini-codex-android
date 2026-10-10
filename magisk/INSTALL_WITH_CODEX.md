@@ -25,3 +25,26 @@ Repository: https://github.com/kalabuxova1-hash/codaki-mini-codex
 The phone needs existing Magisk root and Termux Python. For first installation without a phone-control channel, connect the phone to the Codex computer and approve USB debugging. If Android requires it after reboot, unlock the phone yourself. Codex automates the remaining supported steps; mobile ChatGPT alone is not an ADB host.
 
 На телефоне заранее нужны root с Magisk и Termux с Python. При первой установке без канала управления подключите телефон к компьютеру с Codex и разрешите USB-отладку. После перезагрузки Android может потребовать первое ручное разблокирование. Остальные доступные шаги выполняет Codex; мобильный ChatGPT сам по себе не является ADB-хостом.
+
+## ChatGPT card ZIP / ZIP-карточка ChatGPT
+
+The `chatgpt/` folder contains `codaki-mini-codex-chatgpt-0.2.1.zip`, its source template and `package_card.py`. Import the public card to add setup/control workflows when archive import is supported. Card installation does not pair the device. Continue the existing private relay setup above under the new owner's ChatGPT account. If a connected card with these skills is needed, run `python chatgpt/package_card.py --app-id APP_ID` with the registered App ID from that owner's Sites deployment. Keep the resulting `.private/chatgpt/` archive private. Do not publish or reuse the author's private App ID. The phone runtime remains 0.2.0 in this packaging release.
+
+Карточка устанавливается отдельно; затем телефон подключается к личному серверу нового владельца. Сервер закрепляет ID аккаунта ChatGPT владельца, телефон использует свой токен. Публичная карточка не содержит привязку устройства или личный App ID автора.
+
+### Update with GPT
+
+**A new version is out → download the new ZIP → give the file to GPT → ask it to update the plugin.**
+
+> Update this Codaki plugin from the new ZIP. Keep my phone connection, private server, keys, memory and journal. Check the version and checksum, update the existing card, and verify the connection. If this is the full installer, also update the phone components using INSTALL_WITH_CODEX.md.
+
+The bundled update workflow retains your existing App reference and ChatGPT owner binding. A card-only update leaves the phone runtime unchanged. GPT uses the client's available update/import tools; if the client requires a manual import, it prepares the replacement ZIP and tells you that final step. The file must come from this project's Releases. [Card setup and updates](../chatgpt/README.md).
+
+
+### Обновление через GPT
+
+**Вышла новая версия → скачайте новый ZIP → передайте файл GPT → попросите обновить плагин.**
+
+> Обнови этот плагин Codaki из нового ZIP. Сохрани подключение моего телефона, личный сервер, ключи, память и журнал. Проверь версию и контрольную сумму, обнови существующую карточку и проверь связь. Если это полный установщик, также обнови компоненты телефона по INSTALL_WITH_CODEX.md.
+
+Встроенная инструкция обновления сохраняет существующий App ID и привязку к аккаунту ChatGPT владельца. Обновление одной карточки не меняет компоненты телефона. GPT использует доступные средства обновления/импорта; если клиент требует ручного импорта, он подготовит новый ZIP и укажет этот последний шаг. Берите файл из Releases этого проекта. [Настройка и обновление карточки](../chatgpt/README.md).
