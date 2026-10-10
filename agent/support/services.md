@@ -18,12 +18,6 @@ Start with `phone_status` and search relevant existing memory. A passport record
 
 Network dependencies differ between owners. Check the owner's verified configuration and current routes without exporting proxy URLs or credentials. Other Android control plugins may operate a different display; do not reuse their UI coordinates in Codaki Mini Codex.
 
-## Android Use coexistence
-
-Android Use is an optional separate plugin. Known component locations are `/data/adb/android-use-relay`, its Magisk module `android_use_relay`, and `/data/local/tmp/android-use-core`. The passport checks path existence and module metadata; these checks do not prove connectivity or display availability. Codaki Mini Codex can operate without Android Use installed.
-
-Android Use can operate a separate virtual display. Codaki Mini Codex must use its own fresh `read_ui` or screenshot and coordinates from that same surface. Do not reuse nodes, coordinates or job IDs across plugins. Select tools actually available in the conversation; installing Codaki Mini Codex does not install or connect Android Use. No shared API, automatic handoff, or simultaneous two-display operation is verified by this release.
-
 Stopping a network component or the worker may cut this connection. Prepare recovery before changing it. When a job is pending, use `phone_job_result`; verify an uncertain result before repeating an action. Restored connectivity requires a new successful phone operation. If the channel remains unavailable, recovery requires the owner on the phone or an independently configured connection.
 
 Root belongs to the local service; installation does not give the ChatGPT APK root. Disabling or removing the Magisk module stops the worker while preserving private configuration and task memory.

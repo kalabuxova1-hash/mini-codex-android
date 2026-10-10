@@ -16,12 +16,6 @@ Also known as **Codaki Mini Codex Android** or **Миникодекс** in Russi
 - Experience accumulation reuses existing memory to retrieve previous solutions and save short confirmed lessons. It adds no second history store or model-weight training.
 - The panel and Magisk display version 0.2.0; upgrades retain connection settings, memory and the job journal.
 
-### Using Android Use alongside Codaki Mini Codex
-
-The support guide accounts for the optional **Android Use** plugin. Inventory checks known relay/core paths and Magisk module metadata when present. Android Use can operate a separate virtual display; Codaki Mini Codex uses the screen returned by its own tools. Obtain fresh UI data from the selected plugin and never transfer coordinates, nodes or job IDs between them.
-
-Install and connect Android Use separately; Codaki Mini Codex does not require it. Version 0.2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
-
 **Codaki Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
 
 Codaki Mini Codex is an independent, open-source Android agent that lets the owner request supported phone operations from ChatGPT. A local Python worker in Termux, started by a Magisk module, polls the owner's **private HTTPS relay** and executes authorized commands **on the Android phone**. The computer can be completely powered off during normal operation.

@@ -18,8 +18,6 @@ PATHS = {
     'memory': '/data/adb/mini-codex/memory',
     'python': '/data/data/com.termux/files/usr/bin/python',
     'modules': '/data/adb/modules',
-    'android_use_relay': '/data/adb/android-use-relay',
-    'android_use_core': '/data/local/tmp/android-use-core',
     'network_proxy': '/data/adb/gpt-vless',
     'network_boot': '/data/adb/modules/gpt_vless_router/service.sh',
     'downloads': '/sdcard/Download',
