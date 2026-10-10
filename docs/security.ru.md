@@ -31,7 +31,7 @@ Mini Codex выполняет команды владельца на Android ч�
 
 ```sh
 python tests/test_release_safety.py --scan .
-python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.1.0.zip
+python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
 python tests/test_release_safety.py
 ```
 

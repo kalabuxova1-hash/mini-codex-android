@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     if (body.id === undefined) return new Response(null,{status:202});
     if (typeof body.id !== "number" && typeof body.id !== "string") return json({jsonrpc:"2.0",id,error:{code:-32600,message:"Invalid request ID"}},400);
     let result: unknown;
-    if (body.method === "initialize") result = { protocolVersion: ["2024-11-05","2025-03-26","2025-06-18"].includes(body.params?.protocolVersion || "") ? body.params!.protocolVersion : "2025-03-26", capabilities:{tools:{}},serverInfo:{name:"Mini Codex Phone",version:"1.0.0"},instructions };
+    if (body.method === "initialize") result = { protocolVersion: ["2024-11-05","2025-03-26","2025-06-18"].includes(body.params?.protocolVersion || "") ? body.params!.protocolVersion : "2025-03-26", capabilities:{tools:{}},serverInfo:{name:"Mini Codex Phone",version:"2.0.0"},instructions };
     else if (body.method === "ping") result = {};
     else if (body.method === "tools/list") result = {tools};
     else if (body.method === "tools/call") {

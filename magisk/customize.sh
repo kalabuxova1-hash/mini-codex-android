@@ -1,6 +1,6 @@
 #!/system/bin/sh
-# Sourced by the Magisk app installer after standard extraction.
-[ "$BOOTMODE" = true ] || abort 'Install with the Magisk Android app, not recovery.'
+# Sourced by Magisk's module installer on a running Android system.
+[ "$BOOTMODE" = true ] || abort 'Install on booted Android with the Magisk app or supported CLI, not recovery.'
 [ -x /data/data/com.termux/files/usr/bin/python ] || abort 'First install official Termux, open it and run: pkg install python'
 BASE=/data/adb/mini-codex
 for path in /data /data/adb "$BASE" "$BASE/config.json" "$BASE/enabled" "$BASE/state" "$BASE/memory"; do

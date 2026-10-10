@@ -15,6 +15,8 @@ PREFIX=/data/data/com.termux/files/usr
   if [ -f "$PREFIX/etc/tls/cert.pem" ]; then export SSL_CERT_FILE="$PREFIX/etc/tls/cert.pem"; fi
   umask 077
   "$PREFIX/bin/python" "$MODDIR/agent/configure.py" --validate >/dev/null 2>&1 || exit 0
+  # Inventory contains metadata only. A failed refresh must not block the worker.
+  "$PREFIX/bin/python" "$MODDIR/agent/support_runtime.py" refresh >/dev/null 2>&1
   "$PREFIX/bin/python" "$MODDIR/agent/phone_agent.py" --config "$BASE/config.json" >"$BASE/startup.log" 2>&1 &
   child=$!
   # Only the worker that owns flock writes agent.pid. A duplicate launch cannot

@@ -2,6 +2,22 @@
 
 English | [Русский](README.ru.md)
 
+**Current version: Mini Codex 2.0 (`2.0.0`).** Built-in support returns a device passport and maintenance guide through `phone_status`. It retrieves previous confirmed solutions from existing task memory and saves new verified lessons. Each phone generates its own inventory; this does not train model weights. See the [2.0 changelog](CHANGELOG.md).
+
+### What changed in 2.0
+
+- A support skill guides diagnosis, service/file discovery and verification after maintenance.
+- A local passport records Android version, installed-package metadata, Magisk modules, important paths and a verification timestamp. Each owner generates their own inventory.
+- `phone_status` exposes the guide, summary, freshness flag and refresh command.
+- Experience accumulation reuses existing memory to retrieve previous solutions and save short confirmed lessons. It adds no second history store or model-weight training.
+- The panel and Magisk display version 2.0; upgrades retain connection settings, memory and the job journal.
+
+### Using Android Use alongside Mini Codex
+
+The support guide accounts for the optional **Android Use** plugin. Inventory checks known relay/core paths and Magisk module metadata when present. Android Use can operate a separate virtual display; Mini Codex uses the screen returned by its own tools. Obtain fresh UI data from the selected plugin and never transfer coordinates, nodes or job IDs between them.
+
+Install and connect Android Use separately; Mini Codex does not require it. Version 2.0 adds component awareness and coexistence instructions. A shared API, automatic switching and simultaneous two-display operation are not implemented or verified by this release.
+
 **Mini Codex runs on Android itself. No PC, laptop, USB connection, desktop ADB server or permanently running computer is required for the agent to operate.**
 
 Mini Codex is an independent, open-source Android agent that lets the owner request supported phone operations from ChatGPT. A local Python worker in Termux, started by a Magisk module, polls the owner's **private HTTPS relay** and executes authorized commands **on the Android phone**. The computer can be completely powered off during normal operation.
@@ -26,7 +42,7 @@ Android UI, installed apps, filesystem and root commands
 
 **Precise distinction:** "without a PC" describes **day-to-day operation after setup**, not a promise that every phone can be rooted or initially prepared without a computer. The system still requires internet access, a functioning private relay, a compatible ChatGPT plugin/account and locally installed root/Termux. This is not a fully offline autonomous AI; it executes requests through ChatGPT. The worker does not bypass a secure lock screen, and a separate hidden virtual display is not a verified release feature.
 
-**Verified scope:** personal use on a rooted Redmi Turbo 3 / Android 16. The public v0.1.0 release ZIP was checked by host and mocked tests but not installed over the working personal installation. Other devices and background behaviour require testing.
+**Verified scope:** personal use on a rooted Redmi Turbo 3 / Android 16. The public v2.0.0 release ZIP was checked by host and mocked tests but not installed over the working personal installation. Other devices and background behaviour require testing.
 
 For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 
@@ -38,29 +54,18 @@ For details, see the [PC-free operation FAQ](docs/pc-free-android.md).
 - Official [Termux](https://github.com/termux/termux-app/releases) with Python.
 - A personal Mini Codex plugin connection to your ChatGPT account and your own private server.
 
-## How to connect
+## Install with Codex
 
-1. Install Termux, open it, and run:
+1. Download `mini-codex-magisk-2.0.0.zip` from the [latest release](https://github.com/kalabuxova1-hash/mini-codex-android/releases/latest) together with `SHA256SUMS`.
+2. Give the ZIP and checksum to Codex and send:
 
-   ```sh
-   pkg update && pkg install python
-   ```
+   > Install Mini Codex 2.0 from this file on my phone. Read INSTALL_WITH_CODEX.md inside the ZIP, verify requirements, configure my own private relay/plugin and check the connection. Use available phone tools or authorized ADB; retain existing settings and memory on upgrade.
 
-2. Set up **your own** private server and personal plugin using the [connection guide](docs/deploy-private-relay.md). You can ask your Codex to do this; the guide includes a ready-to-use prompt. Every user has their own credentials and connection.
+3. If Codex already has an authorized phone-control channel, it can use it. Otherwise connect the phone to the computer running Codex and approve USB debugging. Codex handles the supported installation and configuration steps; Android may require you to unlock after reboot.
 
-3. Download only `mini-codex-magisk-0.1.0.zip` from the [release](https://github.com/kalabuxova1-hash/mini-codex-android/releases/tag/v0.1.0). This is the Mini Codex agent, **not a root installer**. Verify its checksum against `SHA256SUMS`, install the ZIP in Magisk → Modules → Install from storage, and reboot your phone.
+Root/Magisk and Termux Python must already be installed. The ZIP does not root the phone, install Termux or turn a phone-only chat into an ADB host. The embedded instructions are a workflow for Codex with actual device tools, not an independent installer AI.
 
-4. In Termux, run:
-
-   ```sh
-   su -c /data/adb/modules/mini_codex/configure.sh
-   ```
-
-   Grant root access. Enter your server URL, your agent credential, and the full `Bearer <your Sites bypass>` value if required. Credential input is hidden. Reboot your phone.
-
-5. Install and connect **your own personal Site plugin** in ChatGPT. Ask: “Check my phone's status and root access.” Then verify that it works with your PC switched off.
-
-**Ready:** request further actions in ChatGPT. You do not need to download separate APKs, source code or flashing tools to your phone. The agent is required: the plugin sends it jobs, and it executes them on Android. A plugin alone cannot access your device without the agent.
+See [installation details and manual setup](docs/install-android.md) and [private relay setup](docs/deploy-private-relay.md).
 
 ## For independent reviewers
 

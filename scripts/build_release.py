@@ -4,10 +4,10 @@ from pathlib import Path
 import shutil
 import zipfile
 
-VERSION='0.1.0'
+VERSION='2.0.0'
 ROOT=Path(__file__).resolve().parents[1]
-MODULE_FILES=('module.prop','skip_mount','customize.sh','service.sh','stop.sh','uninstall.sh','configure.sh')
-AGENT_FILES=('native_phone.py','phone_agent.py','tool-definitions.json','configure.py')
+MODULE_FILES=('module.prop','skip_mount','customize.sh','service.sh','stop.sh','uninstall.sh','configure.sh','INSTALL_WITH_CODEX.md')
+AGENT_FILES=('native_phone.py','phone_agent.py','tool-definitions.json','configure.py','support_runtime.py','support/SKILL.md','support/services.md')
 
 
 def build(root=ROOT):
@@ -31,6 +31,7 @@ def build(root=ROOT):
     agent_output=output/'agent'
     agent_output.mkdir(exist_ok=True)
     for name in AGENT_FILES:
+        (agent_output/name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(root/'agent'/name,agent_output/name)
     digest=hashlib.sha256(target.read_bytes()).hexdigest()
     (output/'SHA256SUMS').write_text(f'{digest}  {target.name}\n',encoding='utf-8')

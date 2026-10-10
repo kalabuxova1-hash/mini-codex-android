@@ -1,6 +1,6 @@
 id=mini_codex
 name=MiniCodex Android Agent
-version=0.1.0
-versionCode=100
+version=2.0
+versionCode=20000
 author=MiniCodex contributors
-description=Root phone tools through your own authenticated private relay. Requires Termux Python and local configuration; outbound HTTPS only.
+description=Mini Codex 2.0: device support, verified inventory and root phone tools through your own authenticated private relay. Requires Termux Python and local configuration; outbound HTTPS only.

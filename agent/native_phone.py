@@ -22,6 +22,7 @@ import uuid
 import xml.etree.ElementTree as ET
 
 BASE=Path(__file__).resolve().parent
+SUPPORT_BASE=Path('/data/adb/mini-codex')
 LOCK=threading.RLock()
 TOTAL_STORAGE_BYTES=5*1024*1024*1024
 AGENT_STORAGE_RESERVE_BYTES=16*1024*1024
@@ -106,7 +107,13 @@ def phone_status() -> dict:
     props = shell('getprop ro.product.model; getprop ro.build.version.release; getprop ro.build.version.incremental', root=False).splitlines()
     battery = shell('dumpsys battery', root=False)
     level = re.search('level:\\s*(\\d+)', battery)
-    return {'state': state, 'model': props[0] if props else '', 'android': props[1] if len(props) > 1 else '', 'build': props[2] if len(props) > 2 else '', 'battery_percent': int(level[1]) if level else None, 'root_identity': shell('id')}
+    result = {'state': state, 'model': props[0] if props else '', 'android': props[1] if len(props) > 1 else '', 'build': props[2] if len(props) > 2 else '', 'battery_percent': int(level[1]) if level else None, 'root_identity': shell('id')}
+    try:
+        from support_runtime import get_context
+        result['support'] = get_context(SUPPORT_BASE)
+    except (ImportError, OSError, ValueError):
+        result['support'] = {'state': 'unavailable', 'skill_path': str(SUPPORT_BASE/'support'/'SKILL.md')}
+    return result
 
 def read_ui(limit: int=120) -> dict:
     """Read fresh visible Android UI nodes with bounds; password/private identifiers are redacted."""

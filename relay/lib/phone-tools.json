@@ -1,7 +1,7 @@
 [
   {
     "name": "phone_status",
-    "description": "Read this phone's Android/build, battery and Magisk root identity. Executes locally on the phone; no PC or ADB.",
+    "description": "Start phone tasks here. Read live Android/build, battery and root identity, plus the built-in support skill and verified device passport summary. Support includes reference paths, freshness and refresh instructions; use existing memory for verified maintenance lessons. Executes on this phone without a PC.",
     "inputSchema": {
       "type": "object",
       "properties": {},

@@ -18,7 +18,7 @@ jobs:
       - run: python -m unittest discover -s tests -p '*.py'
       - run: python scripts/build_release.py
       - run: python tests/test_release_safety.py --scan .
-      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-0.1.0.zip
+      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
   relay:
     runs-on: ubuntu-latest
     defaults:
@@ -37,3 +37,32 @@ jobs:
       - run: node --test tests/*.test.mjs
       - run: npx tsc --noEmit
       - run: npm run build
+  release:
+    needs: [python, relay]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: mini-codex-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - run: python scripts/build_release.py
+      - run: python tests/test_release_safety.py --scan dist/mini-codex-magisk-2.0.0.zip
+      - name: Publish verified Mini Codex 2.0 release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh release view v2.0.0 >/dev/null 2>&1; then
+            echo 'Existing v2.0.0 release retained.'
+          else
+            gh release create v2.0.0 dist/mini-codex-magisk-2.0.0.zip dist/SHA256SUMS \
+              --target "$GITHUB_SHA" --title 'Mini Codex 2.0' --notes-file CHANGELOG.md
+          fi
