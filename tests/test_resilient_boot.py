@@ -11,6 +11,20 @@ from phone_agent import Relay
 
 
 class ResilienceTests(unittest.TestCase):
+    def test_live_route_changes_preserve_config_and_do_not_retry_requests(self):
+        from unittest.mock import MagicMock
+        conf={'relay_url':'https://private.example.com','agent_token':'a'*40,'outbound_proxy':'http://127.0.0.1:17890'}
+        created=[]
+        def opener(*handlers):
+            created.append(handlers)
+            result=MagicMock();result.open.return_value.__enter__.return_value.status=204
+            return result
+        with patch('phone_agent.choose_proxy',side_effect=['http://127.0.0.1:17890','','http://127.0.0.1:17890']),patch('urllib.request.build_opener',side_effect=opener):
+            relay=Relay(conf);relay.request('/api/agent/next');relay.request('/api/agent/next')
+        self.assertEqual(len(created),3)
+        proxies=[next(h.proxies for h in items if isinstance(h,__import__('urllib.request',fromlist=['ProxyHandler']).ProxyHandler)) for items in created]
+        self.assertEqual(proxies,[{'https':'http://127.0.0.1:17890'},{},{'https':'http://127.0.0.1:17890'}])
+        self.assertEqual(conf['outbound_proxy'],'http://127.0.0.1:17890')
     def setUp(self):
         self.base=Path('/tmp/mini-test-private')
         self.module=Path('/tmp/mini-test-magisk')

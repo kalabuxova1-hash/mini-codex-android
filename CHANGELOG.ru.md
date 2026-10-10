@@ -4,6 +4,8 @@
 
 Включает функции 0.2.2: локальный прокси Shadow VLESS и автоперезапуск Android-агента после сбоя. Сохраняются настройки прокси, enabled, ключи, память и журнал.
 
+Исправлена доставка результатов при другом Android VPN: агент учитывает режим ожидания Shadow VLESS и автоматически возвращается к заданному прокси после его завершения. Настройки сети не меняются. Исправлено чтение SID Windows при русской кодировке системного вывода.
+
 - Windows background agent: PowerShell, files, durable no-replay journal, local consent and revocation.
 - Saved email-addressed pairing with ChatGPT sign-in and PC fingerprint approval; no fixed link-count limit.
 - Independent phone/PC use, optional two-way requests, PC-only operation.

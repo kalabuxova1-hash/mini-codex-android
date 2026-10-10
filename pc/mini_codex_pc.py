@@ -40,7 +40,7 @@ def real_storage(path):
 def protect(path):
     path = real_storage(path)
     if os.name == 'nt':
-        info = subprocess.run(['whoami', '/user', '/fo', 'csv'], capture_output=True, text=True, check=True,
+        info = subprocess.run(['whoami', '/user', '/fo', 'csv'], capture_output=True, text=True, errors='replace', check=True,
                               creationflags=subprocess.CREATE_NO_WINDOW)
         sid = re.search(r'S-1-5-[0-9-]+', info.stdout)
         if not sid: raise RuntimeError('Cannot identify Windows owner')

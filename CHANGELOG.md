@@ -2,7 +2,7 @@
 
 ## 0.2.3 — Mini Codex PC
 
-This release includes the 0.2.2 Android crash supervisor and optional loopback Shadow VLESS proxy unchanged. Existing private proxy settings, enabled markers, keys, memory and journal are preserved.
+This release includes the 0.2.2 Android crash supervisor and optional loopback Shadow VLESS proxy. Automatic route selection respects Shadow VLESS standby behind an existing Android VPN and restores the configured proxy when standby ends. Existing private proxy settings, enabled markers, keys, memory and journal are preserved.
 
 - Windows background agent: PowerShell, files, durable no-replay journal, local consent and revocation.
 - Saved email-addressed pairing with ChatGPT sign-in and PC fingerprint approval; no fixed link-count limit.
