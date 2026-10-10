@@ -414,7 +414,7 @@ def rpc(req):
     method=req.get("method");ident=req.get("id")
     if method=="notifications/initialized":return None
     if method=="initialize":
-        result={"protocolVersion":"2025-03-26","capabilities":{"tools":{"listChanged":False}},"serverInfo":{"name":"Android Use Core","version":"0.2.0"}}
+        result={"protocolVersion":"2025-03-26","capabilities":{"tools":{"listChanged":False}},"serverInfo":{"name":"Android Use Core","version":"0.0.1"}}
     elif method=="tools/list":result={"tools":TOOLS}
     elif method=="ping":result={}
     elif method=="tools/call":
