@@ -27,7 +27,7 @@ def validate(values, base=BASE, module=MODULE):
     if not isinstance(values, dict):
         raise ValueError('Configuration must be a JSON object')
     allowed = {'relay_url','agent_token','sites_authorization','poll_seconds',
-               'state_dir','memory_dir','disable_file'}
+               'state_dir','memory_dir','disable_file','outbound_proxy'}
     if set(values)-allowed:
         raise ValueError('Unknown configuration fields')
     url = values.get('relay_url', '')
@@ -63,7 +63,27 @@ def validate(values, base=BASE, module=MODULE):
     delay=values.get('poll_seconds',3)
     if isinstance(delay,bool) or not isinstance(delay,(int,float)) or not 1<=delay<=30:
         raise ValueError('Poll interval must be between 1 and 30 seconds')
+    # Only a loopback HTTP proxy is permitted; never embed subscription URLs or
+    # send relay credentials through an arbitrary public proxy.
+    proxy=values.get('outbound_proxy','')
+    if not isinstance(proxy,str):
+        raise ValueError('Invalid local proxy URL')
+    if proxy:
+        if any(ord(c)<33 or c.isspace() for c in proxy):
+            raise ValueError('Invalid local proxy URL')
+        parsed_proxy=urllib.parse.urlsplit(proxy)
+        try:
+            proxy_port=parsed_proxy.port
+            proxy_host=parsed_proxy.hostname
+        except ValueError:
+            raise ValueError('Invalid local proxy port') from None
+        if (parsed_proxy.scheme!='http' or proxy_host not in ('127.0.0.1','::1')
+                or proxy_port is None or not 1<=proxy_port<=65535
+                or parsed_proxy.username or parsed_proxy.password or parsed_proxy.path
+                or parsed_proxy.query or parsed_proxy.fragment):
+            raise ValueError('Proxy must be a local HTTP listener with an explicit port')
     result={'relay_url':url.rstrip('/'),'agent_token':token,'sites_authorization':bypass,
+            'outbound_proxy':proxy,
             'poll_seconds':delay,'state_dir':str(base/'state'),
             'memory_dir':str(base/'memory'),'disable_file':str(module/'disable')}
     for key in ('state_dir','memory_dir','disable_file'):

@@ -2,6 +2,12 @@
 
 English | [Русский](CHANGELOG.ru.md)
 
+## 0.2.2
+
+Merges verified personal-agent resilience with public security controls: Magisk worker watchdog restarts the crashed process with a 15-second delay; optional validated loopback HTTP proxy (127.0.0.1 or ::1) supports owner-managed local VLESS without bundling subscription data; retain single-instance flock, config validation, safe diagnostics, journal, memory and private relay.
+
+Migrating the older personal module's proxy and enabled marker is a separate explicit step, not an automated change to a running phone. See docs/resilient-boot.md. Host tests do not prove live reboot reliability.
+
 ## 0.2.1
 
 Includes an update skill: give GPT a newer ZIP to prepare/apply an update while preserving the existing App reference, private relay and phone state.

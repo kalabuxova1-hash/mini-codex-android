@@ -64,7 +64,12 @@ class Relay:
         self.headers={'Authorization':'Bearer '+token,'Accept':'application/json'}
         if config.get('sites_authorization'):
             self.headers['OAI-Sites-Authorization']=config['sites_authorization']
-        self.opener=urllib.request.build_opener(NoRedirect(),urllib.request.HTTPSHandler(context=ssl.create_default_context()))
+        proxy=config.get('outbound_proxy','')
+        # Explicit local VLESS HTTP proxy overrides ambient shell proxy settings.
+        # A blank value preserves the default urllib environment behavior.
+        proxy_handler=urllib.request.ProxyHandler({'https':proxy}) if proxy else urllib.request.ProxyHandler()
+        self.opener=urllib.request.build_opener(NoRedirect(),proxy_handler,
+                                                 urllib.request.HTTPSHandler(context=ssl.create_default_context()))
 
     def request(self,path:str,body:dict|None=None):
         headers=self.headers.copy()

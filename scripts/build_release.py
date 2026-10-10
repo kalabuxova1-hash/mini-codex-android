@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import zipfile
 
-VERSION='0.2.1'
+VERSION='0.2.2'
 ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('mini_codex_card',ROOT/'chatgpt'/'package_card.py')
 card_builder=importlib.util.module_from_spec(spec)

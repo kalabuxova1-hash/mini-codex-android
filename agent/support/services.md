@@ -1,4 +1,4 @@
-# Codaki Mini Codex 0.2.0: service reference
+# Codaki Mini Codex 0.2.2: service reference
 
 The release worker executes authorized tools on Android. The model in the chat makes decisions; the phone has no independent background AI model.
 
@@ -21,3 +21,7 @@ Network dependencies differ between owners. Check the owner's verified configura
 Stopping a network component or the worker may cut this connection. Prepare recovery before changing it. When a job is pending, use `phone_job_result`; verify an uncertain result before repeating an action. Restored connectivity requires a new successful phone operation. If the channel remains unavailable, recovery requires the owner on the phone or an independently configured connection.
 
 Root belongs to the local service; installation does not give the ChatGPT APK root. Disabling or removing the Magisk module stops the worker while preserving private configuration and task memory.
+
+## 0.2.2: watchdog and proxy
+
+The Magisk service restarts unexpectedly stopped workers after 15 seconds. The worker flock prevents a second agent; the journal prevents duplicate root jobs. Owner-defined `outbound_proxy` in private config is an optional loopback HTTP listener, e.g. `http://127.0.0.1:17890`; never publish a subscription or secrets. Legacy local installation can have an absent enabled marker and a proxy set in service.sh; migrate these deliberately after backup. See docs/resilient-boot.md.
