@@ -116,6 +116,10 @@ export async function pendingLink(id: string, recipientEmail: string): Promise<L
   await maintain();
   return db().prepare("SELECT * FROM pc_links WHERE id=? AND email=? AND state='pending'").bind(id, email(recipientEmail)).first<Link>();
 }
+export async function pairingLink(id: string, user: { userId: string; email: string }): Promise<Link | null> {
+  await maintain();
+  return db().prepare("SELECT * FROM pc_links WHERE id=? AND email=? AND (state='pending' OR (state='active' AND owner=?))").bind(id, email(user.email), user.userId).first<Link>();
+}
 export async function approve(id: string, user: { userId: string; email: string }, fingerprint: string) {
   const pending = await pendingLink(id, user.email);
   if (!pending || !pending.token_hash || pending.token_hash !== fingerprint) throw new Error("Pairing expired or fingerprint changed");

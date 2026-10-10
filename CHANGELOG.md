@@ -10,6 +10,7 @@ This release includes the 0.2.2 Android crash supervisor and optional loopback S
 - Separate PC installer and portable GPT card; Codex installation and App-preserving ZIP update workflows.
 - Composition with available, owner-authorized Computer Use/Sites client plugins; optional installed Codex CLI.
 - Additive PC relay migration; existing phone owner pin and private runtime preserved.
+- Maintenance: PowerShell can use the approved root as its default working directory while file tools still protect private agent storage. Saved pairings remain visible to their authenticated owner after approval. Installation checks require a live background-agent heartbeat and a completed round trip.
 
 English | [Русский](CHANGELOG.ru.md)
 

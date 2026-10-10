@@ -145,7 +145,7 @@ def bounded_process(argv, cwd, stdin='', timeout=60):
     return {'exit_code': process.returncode, 'output': output.decode('utf-8', 'replace'), 'truncated': truncated[0]}
 
 
-def allowed_path(value, config, base):
+def allowed_path(value, config, base, *, file_target=True):
     if not isinstance(value, str) or not value or '\x00' in value: raise ValueError('Path required')
     path = Path(value)
     if not path.is_absolute(): raise ValueError('Use an absolute path')
@@ -153,7 +153,7 @@ def allowed_path(value, config, base):
     real_storage(path)
     path = path.resolve()
     roots = [Path(p).resolve() for p in config.get('roots', [])]
-    if path.is_relative_to(base.resolve()) or base.resolve().is_relative_to(path):
+    if file_target and (path.is_relative_to(base.resolve()) or base.resolve().is_relative_to(path)):
         raise PermissionError('Private Mini Codex storage is not a file-tool target')
     if not any(path.is_relative_to(root) for root in roots): raise PermissionError('Path outside owner-approved roots')
     return path
@@ -193,7 +193,9 @@ def execute(tool, args, config, base):
             (backup/(secrets.token_hex(12)+'.txt')).write_bytes(path.read_bytes())
         with path.open('w', encoding='utf-8', newline='') as stream: stream.write(value)
         return {'written': len(value.encode('utf-8')), 'path': str(path)}
-    cwd = allowed_path(args.get('cwd', config.get('roots', [''])[0]), config, base)
+    # Selecting a working directory does not read it. PowerShell already has
+    # the explicitly approved Windows-user grant; file tools retain the guard.
+    cwd = allowed_path(args.get('cwd', config.get('roots', [''])[0]), config, base, file_target=False)
     if not cwd.is_dir(): raise ValueError('Working directory must exist')
     seconds = args.get('timeout_seconds', 60)
     if isinstance(seconds, bool) or not isinstance(seconds, int) or not 1 <= seconds <= 90: raise ValueError('timeout_seconds must be 1..90')

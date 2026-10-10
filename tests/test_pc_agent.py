@@ -46,6 +46,15 @@ class PCTests(unittest.TestCase):
         self.assertEqual(path.read_text(), 'new')
         self.assertEqual(next((self.base/'backups').glob('*.txt')).read_text(), 'original')
 
+    def test_terminal_default_cwd_can_contain_private_storage_without_exposing_it_to_file_tools(self):
+        config = {'capabilities': ['terminal', 'files_read'], 'roots': [str(self.root)]}
+        with patch.object(pc.shutil, 'which', return_value='powershell'), patch.object(pc, 'bounded_process', return_value={'exit_code': 0}) as process:
+            self.assertEqual(pc.execute('pc_terminal', {'command': 'Get-Date'}, config, self.base)['exit_code'], 0)
+            self.assertEqual(process.call_args.args[1], self.root)
+        for path in (self.root, self.base, self.base/'config.json'):
+            with self.subTest(path=path), self.assertRaises(PermissionError):
+                pc.execute('pc_list_files', {'path': str(path)}, config, self.base)
+
     def test_duplicate_delivery_never_repeats_side_effect(self):
         journal = pc.Journal(self.base)
         try:

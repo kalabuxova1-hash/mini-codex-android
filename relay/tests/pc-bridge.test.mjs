@@ -51,6 +51,17 @@ const now=()=>Math.floor(Date.now()/1000); const json=(v,s=200)=>Response.json(v
   return {sqlite,context,bridge,request,invoke,pair,close(){sqlite.close();delete globalThis[key];}};
 }
 
+test('pairing page keeps an active link visible only to its authenticated recipient',async()=>{
+  const f=await fixture();try {
+    const link=await f.pair();
+    assert.equal((await f.bridge.pairingLink(link.id,f.context.user)).state,'active');
+    assert.equal(await f.bridge.pairingLink(link.id,{userId:'other',email:f.context.user.email}),null);
+    assert.equal(await f.bridge.pairingLink(link.id,{...f.context.user,email:'other@example.com'}),null);
+    await f.bridge.revoke(link.id);
+    assert.equal(await f.bridge.pairingLink(link.id,f.context.user),null);
+  }finally{f.close();}
+});
+
 test('email is invitation only; wrong owner, fingerprint and reused code rejected',async()=>{
   const f=await fixture();try {
     const invite=await f.invoke('mini_pc_invite',{email:'PC@EXAMPLE.COM'});

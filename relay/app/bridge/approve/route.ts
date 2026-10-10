@@ -22,6 +22,6 @@ export async function POST(request: Request) {
     for (const chunk of chunks) { bytes.set(chunk,position); position += chunk.length; }
     const data = new URLSearchParams(new TextDecoder().decode(bytes));
     await approve(String(data.get("id") || ""), user, String(data.get("fingerprint") || ""));
-    return new Response("Подключение сохранено. Вернитесь в терминал ПК и завершите настройку.", { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" } });
+    return new Response(null, { status: 303, headers: { "Location": "/bridge?id=" + encodeURIComponent(String(data.get("id"))), "Cache-Control": "no-store" } });
   } catch { return json({ error: "Invitation unavailable or changed; refresh and compare fingerprint" }, 403); }
 }
