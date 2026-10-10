@@ -1,0 +1,210 @@
+[
+  {
+    "name": "android_status",
+    "description": "Verified virtual-display status",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_windows",
+    "description": "Activity names only, never physical UI",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_launch",
+    "description": "Launch on own virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "component"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_tap",
+    "description": "Tap on own virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_key",
+    "description": "Navigation key on own virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_swipe",
+    "description": "Swipe on own virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "integer"
+        },
+        "y1": {
+          "type": "integer"
+        },
+        "x2": {
+          "type": "integer"
+        },
+        "y2": {
+          "type": "integer"
+        },
+        "ms": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "ms"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_privileges",
+    "description": "Report Android Use Core service identity only.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_start",
+    "description": "Create or reuse the dedicated trusted virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_stop",
+    "description": "Release only the verified Android Use virtual display",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_capture",
+    "description": "Capture only the verified private virtual screen as a PNG image",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_batch",
+    "description": "Execute 1-18 validated GUI actions on the independent Android display. Returns partial trace if an action fails; never automatically replays.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 18,
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "steps"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_inspect_ui",
+    "description": "Read UI nodes ONLY from verified isolated display via system UiAutomator; passwords are redacted.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_click_text",
+    "description": "Click exactly one matching clickable text on the private display; refuses ambiguity.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "android_set_text",
+    "description": "Set Unicode text in exactly one non-password editable field on the private display. Never sends messages by itself.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  }
+]
