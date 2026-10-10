@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "codaki-mini-codex-pc",
+  "version": "0.2.3",
+  "description": "Управление ПК через PowerShell с разрешения владельца; телефон необязателен.",
+  "author": {
+    "name": "Codaki contributors"
+  },
+  "repository": "https://github.com/kalabuxova1-hash/codaki-mini-codex",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "apps": "./.app.json",
+      "onboardingSkill": "./skills/setup/SKILL.md",
+      "interface": {
+        "displayName": "Codaki Mini Codex — ПК",
+        "shortDescription": "Управление ПК через PowerShell с разрешения владельца; телефон необязателен.",
+        "longDescription": "Фоновый агент без окна: PowerShell, файлы, сохранённые связи с телефонами и совместная работа с доступными плагинами GPT. Сервер и разрешения настраиваются владельцем.",
+        "developerName": "Codaki",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://github.com/kalabuxova1-hash/codaki-mini-codex",
+        "defaultPrompt": [
+          "Настрой Mini Codex на моём ПК и проверь разрешённые возможности."
+        ],
+        "brandColor": "#6EF0BA",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png"
+      }
+    }
+  }
+}

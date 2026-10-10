@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.3 — Mini Codex PC
+
+This release includes the 0.2.2 Android crash supervisor and optional loopback Shadow VLESS proxy unchanged. Existing private proxy settings, enabled markers, keys, memory and journal are preserved.
+
+- Windows background agent: PowerShell, files, durable no-replay journal, local consent and revocation.
+- Saved email-addressed pairing with ChatGPT sign-in and PC fingerprint approval; no fixed link-count limit.
+- Independent phone/PC use, optional two-way requests, PC-only operation.
+- Separate PC installer and portable GPT card; Codex installation and App-preserving ZIP update workflows.
+- Composition with available, owner-authorized Computer Use/Sites client plugins; optional installed Codex CLI.
+- Additive PC relay migration; existing phone owner pin and private runtime preserved.
+
 English | [Русский](CHANGELOG.ru.md)
 
 ## 0.2.2

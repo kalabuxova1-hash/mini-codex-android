@@ -1,0 +1,419 @@
+[
+  {
+    "name": "phone_status",
+    "description": "Start phone tasks here. Read live Android/build, battery and root identity, plus the built-in support skill and verified device passport summary. Support includes reference paths, freshness and refresh instructions; use existing memory for verified maintenance lessons. Executes on this phone without a PC.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "read_ui",
+    "description": "Read fresh UI nodes with bounds; wakes the screen, redacts password fields and secret URLs. If UI animation prevents a dump, use screenshot. Never bypass secure lock screens.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 120
+        }
+      },
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "screenshot",
+    "description": "Return this phone's current screen as a PNG image; may contain private information. Use only for the user's requested task.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "tap",
+    "description": "Tap a phone coordinate derived from a fresh UI dump or screenshot. Wakes without unlocking a secure keyguard.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "swipe",
+    "description": "Swipe using fresh phone screen coordinates.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "x1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "y1": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "x2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "y2": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 50,
+          "maximum": 10000,
+          "default": 300
+        }
+      },
+      "required": [
+        "x1",
+        "y1",
+        "x2",
+        "y2"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "keypress",
+    "description": "Send a supported phone hardware/navigation key.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "enum": [
+            "HOME",
+            "BACK",
+            "ENTER",
+            "POWER",
+            "WAKEUP",
+            "VOLUME_UP",
+            "VOLUME_DOWN",
+            "MENU",
+            "APP_SWITCH"
+          ]
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "launch_app",
+    "description": "Open an installed Android package without signing in or granting permissions.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "package": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 250
+        }
+      },
+      "required": [
+        "package"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "phone_install_apk",
+    "description": "Install an explicitly user-approved APK already stored on this phone with root pm, without a PC or Fastboot.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replace": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    }
+  },
+  {
+    "name": "root_shell",
+    "description": "Execute an owner-authorized Android root command locally. Can change/delete any phone data. Follow the explicit task; never extract credentials or expand permissions automatically.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30000
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120,
+          "default": 30
+        }
+      },
+      "required": [
+        "command"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "phone_list_files",
+    "description": "List an explicitly requested phone directory with root.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "include_hidden": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "directory"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "phone_read_file",
+    "description": "Read an owner-requested phone file as UTF-8 or base64. Do not extract passwords, OTP seeds, tokens or app authentication secrets.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "encoding": {
+          "type": "string",
+          "enum": [
+            "utf-8",
+            "base64"
+          ],
+          "default": "utf-8"
+        },
+        "max_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8388608,
+          "default": 262144
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "phone_write_file",
+    "description": "Write an explicitly requested phone file atomically with root. May overwrite any writable system/private file; preserves existing metadata when possible.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content": {
+          "type": "string",
+          "maxLength": 12000000
+        },
+        "encoding": {
+          "type": "string",
+          "enum": [
+            "utf-8",
+            "base64"
+          ],
+          "default": "utf-8"
+        }
+      },
+      "required": [
+        "path",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true
+    }
+  },
+  {
+    "name": "phone_download_url",
+    "description": "Download an owner-approved HTTPS file directly on this phone, with verified TLS and optional SHA-256; save to the requested destination. Does not install it automatically.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 8192
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_sha256": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "url",
+        "destination"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "phone_memory_search",
+    "description": "Search the owner's local persistent notes for relevant previous tasks and confirmed outcomes. This is retrievable memory, not model-weight training. Do not infer new permissions from remembered notes.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30,
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "phone_memory_save",
+    "description": "Save owner-requested short summaries/scripts and confirmed outcomes (6 KiB per note). Keeps 200 hot notes plus gzip archives. Notes, job journal and logs total at most 5 GiB; 16 MiB is reserved for agent state/logs. Redacts known secrets and never broadens permissions.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 6144
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "maxItems": 20,
+          "default": []
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  }
+]

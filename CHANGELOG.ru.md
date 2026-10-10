@@ -1,5 +1,16 @@
 # Изменения
 
+## 0.2.3 — Mini Codex PC
+
+Включает функции 0.2.2: локальный прокси Shadow VLESS и автоперезапуск Android-агента после сбоя. Сохраняются настройки прокси, enabled, ключи, память и журнал.
+
+- Windows background agent: PowerShell, files, durable no-replay journal, local consent and revocation.
+- Saved email-addressed pairing with ChatGPT sign-in and PC fingerprint approval; no fixed link-count limit.
+- Independent phone/PC use, optional two-way requests, PC-only operation.
+- Separate PC installer and portable GPT card; Codex installation and App-preserving ZIP update workflows.
+- Composition with available, owner-authorized Computer Use/Sites client plugins; optional installed Codex CLI.
+- Additive PC relay migration; existing phone owner pin and private runtime preserved.
+
 [English](CHANGELOG.md) | Русский
 
 ## 0.2.2
